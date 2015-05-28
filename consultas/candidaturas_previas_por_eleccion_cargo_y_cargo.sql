@@ -31,7 +31,7 @@ FROM (
     FROM  `Listado`
     WHERE  `Anno` >=1946
     AND `Anno` <=1955
-    AND  `Electo` =1
+    AND `Electo` =1
     AND (
       (
         `Cargo` =  'Diputado'
@@ -48,6 +48,7 @@ FROM (
     )
     GROUP BY `ID_Persona`
   ) AS  `T` 
+  WHERE `Partidos` IS NOT NULL
   GROUP BY  `Anno`, `Cargo`
 
 ) AS `Todos`
@@ -58,11 +59,18 @@ LEFT JOIN (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
     CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`, 
-    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`
+    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`,
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -79,6 +87,7 @@ LEFT JOIN (
     )
     AND  `Previos`.`Anno` < `T`.`Anno`
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`, `Cargo_previo`
 ) AS `Diputado_nacional`
 ON `Todos`.`Anno` = `Diputado_nacional`.`Anno`
@@ -91,11 +100,18 @@ LEFT JOIN (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
     CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`, 
-    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`
+    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`, 
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -112,6 +128,7 @@ LEFT JOIN (
     )
     AND  `Previos`.`Anno` < `T`.`Anno`
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`, `Cargo_previo`
 ) AS `Senador_provincial`
 ON `Todos`.`Anno` = `Senador_provincial`.`Anno`
@@ -124,11 +141,18 @@ LEFT JOIN (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
     CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`, 
-    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`
+    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`, 
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -145,6 +169,7 @@ LEFT JOIN (
     )
     AND  `Previos`.`Anno` < `T`.`Anno`
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`, `Cargo_previo`
 ) AS `Diputado_provincial`
 ON `Todos`.`Anno` = `Diputado_provincial`.`Anno`
@@ -157,11 +182,18 @@ LEFT JOIN (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
     CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`, 
-    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`
+    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`, 
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -178,6 +210,7 @@ LEFT JOIN (
     )
     AND  `Previos`.`Anno` < `T`.`Anno`
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`, `Cargo_previo`
 ) AS `Elector_gobernador`
 ON `Todos`.`Anno` = `Elector_gobernador`.`Anno`
@@ -190,11 +223,18 @@ LEFT JOIN (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
     CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`, 
-    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`
+    CONCAT(`Previos`.`Cargo`, ' ',  `Previos`.`Ambito`) AS `Cargo_previo`, 
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -211,6 +251,7 @@ LEFT JOIN (
     )
     AND  `Previos`.`Anno` < `T`.`Anno`
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`, `Cargo_previo`
 ) AS `Elector_presidente`
 ON `Todos`.`Anno` = `Elector_presidente`.`Anno`

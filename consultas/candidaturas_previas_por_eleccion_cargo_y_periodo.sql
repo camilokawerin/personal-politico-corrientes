@@ -46,6 +46,7 @@ FROM (
     )
     GROUP BY `ID_Persona`
   ) AS  `T` 
+  WHERE `Partidos` IS NOT NULL
   GROUP BY  `Anno`, `Cargo`
 ) AS `Todos`
 
@@ -54,11 +55,18 @@ LEFT JOIN (
   FROM (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
-    CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`
+    CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`,
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND  `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -76,6 +84,7 @@ LEFT JOIN (
     AND  `Previos`.`Anno` >= 1946
     AND  `Previos`.`Anno` < `T`.`Anno`
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`
 ) AS `Candidatura_1946_1955`
 ON `Todos`.`Anno` = `Candidatura_1946_1955`.`Anno`
@@ -86,11 +95,18 @@ LEFT JOIN (
   FROM (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
-    CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`
+    CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`, 
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -108,6 +124,7 @@ LEFT JOIN (
     AND  `Previos`.`Anno` >= 1931
     AND  `Previos`.`Anno` <= 1942
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`
 ) AS `Candidatura_1931_1942`
 ON `Todos`.`Anno` = `Candidatura_1931_1942`.`Anno`
@@ -118,11 +135,18 @@ LEFT JOIN (
   FROM (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
-    CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`
+    CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`, 
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -140,6 +164,7 @@ LEFT JOIN (
     AND  `Previos`.`Anno` >= 1919
     AND  `Previos`.`Anno` <= 1929
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`
 ) AS `Candidatura_1919_1929`
 ON `Todos`.`Anno` = `Candidatura_1919_1929`.`Anno`
@@ -150,11 +175,18 @@ LEFT JOIN (
   FROM (
     SELECT DISTINCT `T`.`ID_Persona`, 
     `T`.`Anno`, 
-    CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`
+    CONCAT(`T`.`Cargo`, ' ',  `T`.`Ambito`) AS `Cargo`, 
+    CASE `T`.`Partido` 
+      WHEN 'Laborista Correntino' THEN 'Laborista'
+      WHEN 'Radical (Junta Reorganizadora)' THEN 'Radical (J. R.)'
+      WHEN 'Peronista' THEN 'Peronista'
+    END AS `Partidos`
     FROM  `Listado`  AS  `T` 
     INNER JOIN  `Listado` AS  `Previos` 
       ON `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
-    WHERE  `T`.`Electo` =1
+    WHERE `T`.`Anno` >=1946
+    AND `T`.`Anno` <=1955
+    AND `T`.`Electo` =1
     AND (
       (
         `T`.`Cargo` =  'Diputado'
@@ -172,6 +204,7 @@ LEFT JOIN (
     AND  `Previos`.`Anno` >= 1907
     AND  `Previos`.`Anno` <= 1917
   ) AS `T`
+  WHERE `Partidos` IS NOT NULL
   GROUP BY `Anno`, `Cargo`
 ) AS `Candidatura_1907_1917`
 ON `Todos`.`Anno` = `Candidatura_1907_1917`.`Anno`

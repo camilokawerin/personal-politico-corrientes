@@ -72,6 +72,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       (
@@ -118,6 +119,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       (
@@ -164,6 +166,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       (
@@ -210,6 +213,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       (

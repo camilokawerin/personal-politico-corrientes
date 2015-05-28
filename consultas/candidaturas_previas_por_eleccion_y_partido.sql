@@ -27,6 +27,7 @@ FROM (
     END AS `Partidos`
     FROM  `Listado`
     WHERE  `Anno` >= 1946
+    AND `Anno` <=1955
     AND `Electo` =1
     AND (
       `Cargo` =  'Diputado'
@@ -58,6 +59,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `T`.`Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       `T`.`Cargo` =  'Diputado'
@@ -94,6 +96,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `T`.`Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       `T`.`Cargo` =  'Diputado'
@@ -130,6 +133,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `T`.`Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       `T`.`Cargo` =  'Diputado'
@@ -166,6 +170,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `T`.`Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       `T`.`Cargo` =  'Diputado'
@@ -202,6 +207,7 @@ LEFT JOIN (
     INNER JOIN  `Listado` AS  `Previos` 
       ON  `Previos`.`ID_Persona` =  `T`.`ID_Persona` 
     WHERE `T`.`Anno` >= 1946
+    AND `T`.`Anno` <=1955
     AND `T`.`Electo` =1
     AND (
       `T`.`Cargo` =  'Diputado'
@@ -217,6 +223,3 @@ LEFT JOIN (
 ON `Todos`.`Anno` = `Candidatura_otros`.`Anno`
 AND  `Todos`.`Partidos` = `Candidatura_otros`.`Partidos`
 AND `Candidatura_otros`.`Partidos_previos` = 'Otros'
-
-
-
