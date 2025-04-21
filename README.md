@@ -11,4 +11,4 @@ La base de datos contiene 2.883 registros con información sobre las trayectoria
 
 ## Próximamente
 
-Para facilitar la investigación, próximamente estará disponible el sistema [Prosopografia](https://github.com/camilokawerin/prosopografia). Este sistema permitirá realizar búsquedas, editar los atributos de cada persona y establecer relaciones políticas, de parentesco o derivadas de espacios de sociabilidad.
+Para facilitar la investigación, próximamente estará disponible el sistema [Prosopografia](https://github.com/camilokawerin/prosopografia) que permitirá realizar búsquedas, editar los atributos de cada persona y establecer relaciones políticas, de parentesco o derivadas de espacios de sociabilidad.
