@@ -1,1 +1,4 @@
-/consultas/mandatos_por_legislador_con_cargos_previos.sql
+informes/
+scripts/__pycache__/
+**/__pycache__/
+*.pyc
