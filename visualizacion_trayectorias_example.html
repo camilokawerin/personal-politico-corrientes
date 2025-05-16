@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización Interactiva de Trayectorias</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        h1 {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+        }
+        .controls {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .checkbox-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            pointer-events: none;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 250px;
+        }
+        .visualization {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+            margin-bottom: 30px; /* Add bottom margin to prevent overlap */
+            position: relative; /* Make position relative for z-index */
+            z-index: 1; /* Ensure visualization is on top */
+        }
+        .axis text {
+            font-size: 12px;
+        }
+        .axis path, .axis line {
+            fill: none;
+            stroke: #333;
+            shape-rendering: crispEdges;
+        }
+        .grid line {
+            stroke: #eee;
+            shape-rendering: crispEdges;
+        }
+        .candidato-point {
+            cursor: pointer;
+        }
+        #search-container {
+            margin-top: 15px;
+        }
+        #search-input {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        #search-results {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin-top: 5px;
+            display: none;
+        }
+        .search-result-item {
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .search-result-item:hover {
+            background-color: #f5f5f5;
+        }
+        .stats-panel {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 40px; /* Increased from 20px to provide more separation */
+            border: 1px solid #ddd;
+            clear: both; /* Ensure it starts after floating elements */
+            position: relative; /* For z-index */
+            z-index: 0; /* Lower than visualization */
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .btn {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #607d8b;
+        }
+        .btn-secondary:hover {
+            background-color: #546e7a;
+        }
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        .info-box h3 {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .info-box ul {
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+        .candidate-highlight .line {
+            stroke-width: 3;
+        }
+        .candidate-highlight circle {
+            r: 6;
+        }
+        .candidate-fade .line {
+            opacity: 0.3;
+        }
+        .candidate-fade circle {
+            opacity: 0.3;
+        }
+        .volver-link {
+            display: inline-block;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .volver-link:hover {
+            background-color: #45a049;
+        }
+        .bifurcacion {
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .candidate-highlight .bifurcacion {
+            stroke-width: 2;
+            opacity: 0.9;
+        }
+        .candidate-fade .bifurcacion {
+            opacity: 0.2;
+        }
+    </style>
+
+<script id="embedded-json-data" type="application/json">
+{"candidatos": [{"id": 1256, "nombre": "Mario R. Rey", "grupo": "Radical Antipersonalista", "electoEnPeronismo": false, "puntos": [{"anio": 1919, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Disidente", "es_peronista": false}, {"anio": 1931, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1935, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1935, "nivel": 1, "cargo": "Elector Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1936, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1937, "nivel": 0.5, "cargo": "Otro Cargo", "electo": true, "partido": "Concordancia", "es_peronista": false}, {"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 288, "nombre": "Indalecio Bustinduy", "grupo": "Radical Antipersonalista", "electoEnPeronismo": false, "puntos": [{"anio": 1931, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1935, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1937, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1938, "nivel": 3, "cargo": "Senador Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1946, "nivel": 3, "cargo": "Senador Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 274, "nombre": "J. Noel Breard", "grupo": "Radical Antipersonalista", "electoEnPeronismo": true, "puntos": [{"anio": 1935, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1938, "nivel": 3, "cargo": "Senador Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1939, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1942, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1946, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}, {"anio": 1946, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 1060, "nombre": "Urbano Mora y Araujo", "grupo": "Radical Antipersonalista", "electoEnPeronismo": true, "puntos": [{"anio": 1926, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Personalista", "es_peronista": false}, {"anio": 1927, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1928, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1929, "nivel": 3, "cargo": "Senador Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1946, "nivel": 1, "cargo": "Elector Provincial", "electo": true, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 159, "nombre": "Francisco Ayala López Torres", "grupo": "Radical Antipersonalista", "electoEnPeronismo": true, "puntos": [{"anio": 1926, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1927, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1934, "nivel": 4, "cargo": "Diputado Nacional", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1946, "nivel": 4, "cargo": "Diputado Nacional", "electo": true, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}, {"anio": 1946, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 1448, "nombre": "Horacio Traynor", "grupo": "Autonomista", "electoEnPeronismo": true, "puntos": [{"anio": 1934, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Autonomista", "es_peronista": false}, {"anio": 1938, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Autonomista", "es_peronista": false}, {"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}, {"anio": 1951, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 741, "nombre": "Joaquín Aristóbulo Gómez", "grupo": "Radical Personalista", "electoEnPeronismo": false, "puntos": [{"anio": 1927, "nivel": 3, "cargo": "Senador Provincial", "electo": false, "partido": "Radical Personalista", "es_peronista": false}, {"anio": 1928, "nivel": 0.5, "cargo": "Otro Cargo", "electo": true, "partido": "Radical Personalista", "es_peronista": false}, {"anio": 1946, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}, {"anio": 1946, "nivel": 3, "cargo": "Senador Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 505, "nombre": "Joaquín Díaz de Vivar", "grupo": "Radical Personalista", "electoEnPeronismo": true, "puntos": [{"anio": 1929, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1935, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical Personalista", "es_peronista": false}, {"anio": 1946, "nivel": 4, "cargo": "Diputado Nacional", "electo": true, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}, {"anio": 1946, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}, {"anio": 1948, "nivel": 4, "cargo": "Diputado Nacional", "electo": true, "partido": "Peronista", "es_peronista": true}, {"anio": 1951, "nivel": 4, "cargo": "Diputado Nacional", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 1283, "nombre": "Julio Rodríguez", "grupo": "Radical Antipersonalista", "electoEnPeronismo": true, "puntos": [{"anio": 1939, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1948, "nivel": 1, "cargo": "Elector Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}, {"anio": 1951, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Peronista", "es_peronista": true}]}, {"id": 712, "nombre": "Luis Isidro Giménez", "grupo": "Liberal", "electoEnPeronismo": true, "puntos": [{"anio": 1937, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Liberal", "es_peronista": false}, {"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Liberal", "es_peronista": false}, {"anio": 1951, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}, {"anio": 1954, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 1204, "nombre": "Pablo Edgardo Politis", "grupo": "Radical Antipersonalista", "electoEnPeronismo": true, "puntos": [{"anio": 1940, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1954, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 551, "nombre": "Saturnino Erro", "grupo": "Liberal", "electoEnPeronismo": true, "puntos": [{"anio": 1924, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Liberal", "es_peronista": false}, {"anio": 1927, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Liberal", "es_peronista": false}, {"anio": 1948, "nivel": 4, "cargo": "Diputado Nacional", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 621, "nombre": "Simón Fernández Zalazar", "grupo": "Radical Personalista", "electoEnPeronismo": false, "puntos": [{"anio": 1928, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical Personalista", "es_peronista": false}, {"anio": 1935, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical Personalista", "es_peronista": false}, {"anio": 1946, "nivel": 3, "cargo": "Senador Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 1449, "nombre": "Alfredo Tressens", "grupo": "Radical Personalista", "electoEnPeronismo": true, "puntos": [{"anio": 1928, "nivel": 4, "cargo": "Diputado Nacional", "electo": true, "partido": "Radical", "es_peronista": false}, {"anio": 1948, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}, {"anio": 1951, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 717, "nombre": "Carlos Inocencio Goitia", "grupo": "Radical Antipersonalista", "electoEnPeronismo": true, "puntos": [{"anio": 1940, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1951, "nivel": 4, "cargo": "Diputado Nacional", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 293, "nombre": "Clemente Cabral", "grupo": "Autonomista", "electoEnPeronismo": true, "puntos": [{"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Demócrata Nacional (Autonomista)", "es_peronista": false}, {"anio": 1948, "nivel": 1, "cargo": "Elector Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 1152, "nombre": "Ernesto A. Pedemonte", "grupo": "Liberal", "electoEnPeronismo": true, "puntos": [{"anio": 1931, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Liberal Pactista", "es_peronista": false}, {"anio": 1948, "nivel": 1, "cargo": "Elector Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 882, "nombre": "Feliciano N. Liñero", "grupo": "Autonomista", "electoEnPeronismo": true, "puntos": [{"anio": 1931, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Demócrata Nacional (Autonomista)", "es_peronista": false}, {"anio": 1948, "nivel": 1, "cargo": "Elector Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 1460, "nombre": "Gregorio Urturi", "grupo": "Liberal", "electoEnPeronismo": true, "puntos": [{"anio": 1931, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Liberal Pactista", "es_peronista": false}, {"anio": 1946, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Laborista Correntino", "es_peronista": true}]}, {"id": 694, "nombre": "José Antonio Garín", "grupo": "Radical Personalista", "electoEnPeronismo": false, "puntos": [{"anio": 1922, "nivel": 0.5, "cargo": "Otro Cargo", "electo": true, "partido": "Radical", "es_peronista": false}, {"anio": 1946, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 1470, "nombre": "José C. Vallejos", "grupo": "Radical Personalista", "electoEnPeronismo": false, "puntos": [{"anio": 1928, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Personalista", "es_peronista": false}, {"anio": 1946, "nivel": 3, "cargo": "Senador Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 1179, "nombre": "José Cruz Pessolano", "grupo": "Radical Personalista", "electoEnPeronismo": false, "puntos": [{"anio": 1935, "nivel": 1, "cargo": "Elector Provincial", "electo": true, "partido": "Radical Personalista", "es_peronista": false}, {"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 633, "nombre": "Juan (h) Figueredo", "grupo": "Autonomista", "electoEnPeronismo": false, "puntos": [{"anio": 1940, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Autonomista", "es_peronista": false}, {"anio": 1946, "nivel": 1, "cargo": "Elector Provincial", "electo": false, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}]}, {"id": 1304, "nombre": "Julio Romero", "grupo": "Radical Antipersonalista", "electoEnPeronismo": true, "puntos": [{"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1951, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 404, "nombre": "María Ramona Córdoba de De la Fuente", "grupo": "Liberal", "electoEnPeronismo": false, "puntos": [{"anio": 1911, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Liberal", "es_peronista": false}, {"anio": 1954, "nivel": 4, "cargo": "Diputado Nacional", "electo": false, "partido": "Peronista", "es_peronista": true}]}, {"id": 1458, "nombre": "Oscar C. Urdapilleta", "grupo": "Autonomista", "electoEnPeronismo": true, "puntos": [{"anio": 1941, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Autonomista", "es_peronista": false}, {"anio": 1946, "nivel": 4, "cargo": "Diputado Nacional", "electo": true, "partido": "Laborista Correntino", "es_peronista": true}]}, {"id": 1059, "nombre": "Rafael Alejandro Mora y Araujo", "grupo": "Radical Antipersonalista", "electoEnPeronismo": true, "puntos": [{"anio": 1929, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Radical Antipersonalista", "es_peronista": false}, {"anio": 1946, "nivel": 2, "cargo": "Diputado Provincial", "electo": true, "partido": "Radical (Junta Reorganizadora)", "es_peronista": true}, {"anio": 1948, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}, {"id": 24, "nombre": "Sabino Apolonio Acosta Monzón", "grupo": "Autonomista", "electoEnPeronismo": true, "puntos": [{"anio": 1931, "nivel": 2, "cargo": "Diputado Provincial", "electo": false, "partido": "Demócrata Nacional (Autonomista)", "es_peronista": false}, {"anio": 1946, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Laborista Correntino", "es_peronista": true}, {"anio": 1948, "nivel": 3, "cargo": "Senador Provincial", "electo": true, "partido": "Peronista", "es_peronista": true}]}], "niveles": [{"nivel": 1, "nombre": "Elector Provincial"}, {"nivel": 2, "nombre": "Diputado Provincial"}, {"nivel": 3, "nombre": "Senador Provincial"}, {"nivel": 4, "nombre": "Diputado Nacional"}], "grupos": [{"nombre": "Radical Antipersonalista", "color": "#FFA500"}, {"nombre": "Radical Personalista", "color": "#4CAF50"}, {"nombre": "Liberal", "color": "#2196F3"}, {"nombre": "Autonomista", "color": "#F44336"}, {"nombre": "Otro", "color": "#9E9E9E"}]}
+</script>
+</head>
+<body>
+    <h1>Visualización Interactiva de Trayectorias Políticas (1905-1955)</h1>
+    
+    <div class="info-box">
+        <p>Esta visualización muestra las trayectorias políticas de los candidatos peronistas que tuvieron experiencia política previa.</p>
+        <h3>Cómo interpretar el gráfico:</h3>
+        <ul>
+            <li>Cada línea representa la carrera política de un candidato a lo largo del tiempo</li>
+            <li>Los círculos rellenos indican candidaturas donde el candidato fue electo</li>
+            <li>Los círculos vacíos representan candidaturas no exitosas</li>
+            <li>Las líneas punteadas verticales indican que el candidato tuvo múltiples candidaturas en un mismo año</li>
+        </ul>
+        <p>Utilice los controles para filtrar por partido de origen o buscar candidatos específicos.</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <h3>Filtrar por Grupos Partidarios</h3>
+            <div class="checkbox-group" id="grupos-filter">
+                <!-- Los checkboxes se generarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <h3>Otras Opciones</h3>
+            <div class="checkbox-group">
+                <label class="checkbox-item">
+                    <input type="checkbox" id="solo-electos" value="electos"> Solo candidatos electos en el peronismo
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="resaltar-peronismo" value="peronismo" checked> Resaltar periodo peronista
+                </label>
+            </div>
+        </div>
+        
+        <div id="search-container">
+            <h3>Buscar Candidato</h3>
+            <input type="text" id="search-input" placeholder="Escriba el nombre del candidato...">
+            <button id="search-btn" class="btn">Buscar</button>
+            <button id="clear-search-btn" class="btn btn-secondary">Limpiar</button>
+            <div id="search-results"></div>
+        </div>
+    </div>
+    
+    <div class="visualization" id="visualization"></div>
+    
+    <div class="stats-panel">
+        <h3>Estadísticas</h3>
+        <p>Total de trayectorias visualizadas: <span id="total-trayectorias">0</span></p>
+        <p>Trayectorias visibles actualmente: <span id="visible-trayectorias">0</span></p>
+        <p>Candidatos electos en el peronismo: <span id="electos-peronismo">0</span></p>
+    </div>
+    
+    <a href="index.html" class="volver-link">Volver al índice</a>
+
+    <script>
+        // Variables globales
+        let data;
+        let candidatosVisibles = new Set();
+        let searchHighlight = null;
+        let candidatosFiltrados = [];
+        
+        // Elementos DOM
+        const visualization = d3.select("#visualization");
+        const searchInput = document.getElementById("search-input");
+        const searchBtn = document.getElementById("search-btn");
+        const clearSearchBtn = document.getElementById("clear-search-btn");
+        const searchResults = document.getElementById("search-results");
+        
+        // Inicialización
+        document.addEventListener("DOMContentLoaded", function() {
+            // Intentar primero buscar los datos en la página (si fueron embebidos)
+            let embeddedData = document.getElementById('embedded-json-data');
+            
+            if (embeddedData) {
+                try {
+                    data = JSON.parse(embeddedData.textContent);
+                    console.log("Datos cargados desde elemento embebido");
+                    setupFilters();
+                    updateStats();
+                    initializeVisualization();
+                } catch(e) {
+                    console.error("Error al parsear datos embebidos:", e);
+                    loadExternalJSON();
+                }
+            } else {
+                loadExternalJSON();
+            }
+            
+            function loadExternalJSON() {
+                console.log("Cargando datos JSON desde archivo externo...");
+                // Cargar directamente desde la ruta relativa al estar usando un servidor HTTP
+                d3.json("trayectorias_candidatos.json")
+                    .then(function(jsonData) {
+                        console.log("Datos JSON cargados exitosamente");
+                        data = jsonData;
+                        setupFilters();
+                        updateStats();
+                        initializeVisualization();
+                    })
+                    .catch(function(error) {
+                        console.error("Error al cargar el archivo JSON:", error);
+                        showError("No se pudo cargar el archivo JSON. Verifique que el archivo exista en el mismo directorio que esta página HTML.");
+                    });
+            }
+            
+            function showError(message) {
+                console.error(message);
+                d3.select("#visualization")
+                    .append("div")
+                    .attr("class", "error-message")
+                    .style("padding", "20px")
+                    .style("color", "red")
+                    .style("background-color", "#ffeeee")
+                    .style("border", "1px solid #ff0000")
+                    .style("border-radius", "5px")
+                    .style("margin-top", "20px")
+                    .html(`
+                        <h3>Error al cargar los datos</h3>
+                        <p>${message}</p>
+                    `);
+            }
+                
+            // Inicializar eventos
+            searchBtn.addEventListener("click", handleSearch);
+            clearSearchBtn.addEventListener("click", clearSearch);
+            searchInput.addEventListener("input", showSearchSuggestions);
+            document.getElementById("solo-electos").addEventListener("change", applyFilters);
+            document.getElementById("resaltar-peronismo").addEventListener("change", togglePeronismHighlight);
+        });
+        
+        function setupFilters() {
+            // Configurar checkboxes para grupos partidarios
+            const gruposFilter = document.getElementById("grupos-filter");
+            const grupos = data.grupos || [];
+            
+            grupos.forEach(grupo => {
+                const checkboxItem = document.createElement("label");
+                checkboxItem.className = "checkbox-item";
+                
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = grupo.nombre;
+                checkbox.checked = true;
+                checkbox.addEventListener("change", applyFilters);
+                
+                const colorSpan = document.createElement("span");
+                colorSpan.className = "checkbox-color";
+                colorSpan.style.backgroundColor = grupo.color;
+                
+                checkboxItem.appendChild(checkbox);
+                checkboxItem.appendChild(colorSpan);
+                checkboxItem.appendChild(document.createTextNode(grupo.nombre));
+                
+                gruposFilter.appendChild(checkboxItem);
+                
+                // Agregar todos los candidatos como visibles inicialmente
+                data.candidatos.forEach(c => {
+                    if (c.grupo === grupo.nombre) {
+                        candidatosVisibles.add(c.id);
+                    }
+                });
+            });
+        }
+        
+        function initializeVisualization() {
+            // Tamaño base y responsive
+            const containerWidth = visualization.node().getBoundingClientRect().width;
+            const minHeight = 600;
+            const maxHeight = 800;
+            
+            // Determinar la altura óptima basada en el ancho disponible
+            // Mayor altura para pantallas más anchas para aprovechar el espacio
+            const heightRatio = 0.7; // Proporción altura/ancho
+            const responsiveHeight = Math.min(maxHeight, Math.max(minHeight, containerWidth * heightRatio));
+            
+            const width = containerWidth;
+            const height = responsiveHeight;
+            const margin = { top: 40, right: 50, bottom: 50, left: 120 };
+            const innerWidth = width - margin.left - margin.right;
+            const innerHeight = height - margin.top - margin.bottom;
+            
+            // Crear SVG con tamaño responsivo
+            const svg = visualization.append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", `0 0 ${width} ${height}`)
+                .attr("preserveAspectRatio", "xMidYMid meet");
+
+            // Crear contenedor para el gráfico con márgenes
+            const chartGroup = svg.append("g")
+                .attr("transform", `translate(${margin.left}, ${margin.top})`);
+            
+            // Definir escalas
+            const xScale = d3.scaleLinear()
+                .domain([1905, 1955])
+                .range([0, innerWidth]);
+            
+            // Calcular qué niveles están presentes en los datos y cuántos candidatos tienen en cada nivel
+            function calcularDistribucionNiveles() {
+                // Para cada nivel, determinar cuántos candidatos tienen puntos en ese nivel
+                const candidatosPorNivel = {};
+                const nivelesPresentes = new Set();
+                
+                // Inicializar con niveles conocidos
+                data.niveles.forEach(nivel => {
+                    candidatosPorNivel[nivel.nivel] = new Set();
+                    nivelesPresentes.add(nivel.nivel);
+                });
+                
+                // Añadir nivel 0.5 para "Otro Cargo" si existe en los datos
+                const nivelesEspeciales = [0.5];
+                nivelesEspeciales.forEach(nivel => {
+                    if (!candidatosPorNivel[nivel]) {
+                        candidatosPorNivel[nivel] = new Set();
+                        nivelesPresentes.add(nivel);
+                    }
+                });
+                
+                // Contar candidatos por nivel
+                candidatosFiltrados.forEach(candidato => {
+                    candidato.puntos.forEach(punto => {
+                        // Si encontramos un nivel no registrado, lo inicializamos
+                        if (!candidatosPorNivel[punto.nivel]) {
+                            candidatosPorNivel[punto.nivel] = new Set();
+                            nivelesPresentes.add(punto.nivel);
+                        }
+                        candidatosPorNivel[punto.nivel].add(candidato.id);
+                    });
+                });
+                
+                // Calcular cuántos candidatos hay en cada nivel
+                const cantidadPorNivel = {};
+                nivelesPresentes.forEach(nivel => {
+                    cantidadPorNivel[nivel] = candidatosPorNivel[nivel].size;
+                });
+                
+                return {
+                    candidatosPorNivel,
+                    cantidadPorNivel,
+                    nivelesPresentes: Array.from(nivelesPresentes).sort((a, b) => a - b)
+                };
+            }
+            
+            // Ajustar la escala Y para que se adapte dinámicamente según la cantidad de puntos
+            function actualizarEscalaY(distribucion) {
+                // Ajustar espaciado según el tamaño de la visualización
+                // Más espacio entre puntos en pantallas grandes
+                const baseSpacing = 18; // Espaciado base
+                const scaleFactor = innerHeight / 600; // Factor de escala basado en la altura
+                
+                const ESPACIO_ENTRE_PUNTOS = baseSpacing * Math.min(1.5, scaleFactor); // Limitar el crecimiento
+                const ESPACIO_ENTRE_NIVELES = 30 * Math.min(1.3, scaleFactor); // Espacio entre niveles también escala
+                const MIN_ALTURA_NIVEL = 40 * Math.min(1.3, scaleFactor); // Altura mínima para un nivel
+                
+                // Calcular altura necesaria para cada nivel basado en la cantidad de puntos
+                const alturaPorNivel = {};
+                let alturaTotal = 0;
+                
+                distribucion.nivelesPresentes.forEach(nivel => {
+                    const cantidadPuntos = distribucion.cantidadPorNivel[nivel] || 0;
+                    // La altura del nivel es el máximo entre la altura mínima y el espacio necesario para todos los puntos
+                    const altura = Math.max(MIN_ALTURA_NIVEL, cantidadPuntos * ESPACIO_ENTRE_PUNTOS);
+                    alturaPorNivel[nivel] = altura;
+                    alturaTotal += altura;
+                });
+                
+                // Añadir espacio entre niveles
+                alturaTotal += (distribucion.nivelesPresentes.length - 1) * ESPACIO_ENTRE_NIVELES;
+                
+                // Crear mapeos acumulativos para posicionar los niveles en el eje Y
+                const posicionesNivel = {};
+                let posicionAcumulada = 0;
+                
+                distribucion.nivelesPresentes.forEach((nivel, i) => {
+                    // Empezamos desde arriba hacia abajo
+                    if (i > 0) {
+                        posicionAcumulada += ESPACIO_ENTRE_NIVELES; // Espacio entre el nivel anterior y este
+                    }
+                    posicionesNivel[nivel] = posicionAcumulada;
+                    posicionAcumulada += alturaPorNivel[nivel];
+                });
+                
+                // Crear función de mapeo para escala Y personalizada
+                const escalaY = d3.scaleLinear()
+                    .domain([0, alturaTotal])
+                    .range([0, innerHeight]);
+                
+                // Función auxiliar para mapear nivel+offset a posición Y
+                function mapearNivelAY(nivel, offset = 0) {
+                    // Obtener la posición base del nivel
+                    const posBase = posicionesNivel[nivel] || 0;
+                    // Aplicar offset proporcional al espacio del nivel
+                    // Aumentamos la dispersión agregando un factor de expansión
+                    // para usar más del espacio asignado al nivel
+                    const factorExpansion = 0.85; // Usar 85% del espacio disponible (0.5 daría solo la mitad)
+                    
+                    // Centrar los puntos y aplicar el factor de expansión para distribuirlos más
+                    const offsetAjustado = 0.5 + (offset - 0.5) * factorExpansion;
+                    
+                    const resultado = posBase + (offsetAjustado * alturaPorNivel[nivel]);
+                    return innerHeight - escalaY(resultado); // Invertimos para que crezca hacia arriba
+                }
+                
+                return {
+                    mapearNivelAY,
+                    alturaPorNivel,
+                    posicionesNivel
+                };
+            }
+            
+            // Añadir ejes
+            const xAxis = d3.axisBottom(xScale)
+                .tickFormat(d => d)
+                .ticks(10);
+                
+            chartGroup.append("g")
+                .attr("class", "axis x-axis")
+                .attr("transform", `translate(0, ${innerHeight})`)
+                .call(xAxis);
+            
+            // Contenedor para el eje Y que se actualizará dinámicamente
+            const yAxisGroup = chartGroup.append("g")
+                .attr("class", "axis y-axis");
+            
+            // Añadir título de ejes
+            chartGroup.append("text")
+                .attr("class", "axis-label")
+                .attr("x", innerWidth / 2)
+                .attr("y", innerHeight + 40)
+                .attr("text-anchor", "middle")
+                .text("Año");
+            
+            // Contenedor para líneas de rejilla
+            const gridGroup = chartGroup.append("g")
+                .attr("class", "grid");
+            
+            // Añadir línea vertical para marcar el inicio del peronismo
+            const peronismoLine = chartGroup.append("line")
+                .attr("class", "peronismo-line")
+                .attr("x1", xScale(1946))
+                .attr("x2", xScale(1946))
+                .attr("y1", 0)
+                .attr("y2", innerHeight)
+                .attr("stroke", "purple")
+                .attr("stroke-width", 2)
+                .attr("stroke-dasharray", "5,5");
+                
+            chartGroup.append("text")
+                .attr("class", "peronismo-label")
+                .attr("x", xScale(1946) + 10)
+                .attr("y", 20)
+                .attr("text-anchor", "start")
+                .attr("fill", "purple")
+                .text("Inicio del Peronismo (1946)");
+            
+            // Crear grupo para trayectorias
+            const trayectoriasGroup = chartGroup.append("g")
+                .attr("class", "trayectorias-group");
+                
+            // Crear grupo para labels
+            const labelsGroup = chartGroup.append("g")
+                .attr("class", "labels-group");
+            
+            // Crear tooltip
+            const tooltip = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+            
+            // Función para renderizar trayectorias con los filtros aplicados
+            window.renderTrayectorias = function() {
+                candidatosFiltrados = data.candidatos.filter(c => candidatosVisibles.has(c.id));
+                
+                // Eliminar trayectorias existentes
+                trayectoriasGroup.selectAll("*").remove();
+                labelsGroup.selectAll("*").remove();
+                
+                // Calcular distribución de candidatos por nivel
+                const distribucion = calcularDistribucionNiveles();
+                
+                // Actualizar escala Y según la distribución actual
+                const escalasY = actualizarEscalaY(distribucion);
+                
+                // Actualizar eje Y con los niveles presentes
+                yAxisGroup.selectAll("*").remove();
+                
+                // Crear etiquetas solo para los niveles principales
+                const nivelesPrincipales = [1, 2, 3, 4];
+                const etiquetasNiveles = {
+                    1: "Elector Provincial",
+                    2: "Diputado Provincial",
+                    3: "Senador Provincial",
+                    4: "Diputado Nacional",
+                    0.5: "Otro Cargo"
+                };
+                
+                // Actualizar líneas de grid para niveles
+                gridGroup.selectAll("*").remove();
+                
+                distribucion.nivelesPresentes.forEach(nivel => {
+                    if (nivel !== 0.5) { // No mostrar línea para "Otro Cargo"
+                        gridGroup.append("line")
+                            .attr("x1", 0)
+                            .attr("x2", innerWidth)
+                            .attr("y1", escalasY.mapearNivelAY(nivel, 0)) // Parte superior del nivel
+                            .attr("y2", escalasY.mapearNivelAY(nivel, 0))
+                            .attr("stroke", "#ddd")
+                            .attr("stroke-width", 1)
+                            .attr("stroke-dasharray", "3,3");
+                    }
+                    
+                    // Añadir etiquetas para niveles principales
+                    if (nivelesPrincipales.includes(nivel)) {
+                        yAxisGroup.append("text")
+                            .attr("x", -10)
+                            .attr("y", escalasY.mapearNivelAY(nivel, 0.5)) // Centro del nivel
+                            .attr("text-anchor", "end")
+                            .attr("dominant-baseline", "middle")
+                            .text(etiquetasNiveles[nivel] || nivel);
+                    }
+                });
+                
+                // Asignar un offset vertical consistente para cada candidato
+                // esto mantendrá la posición vertical relativa de cada candidato en cada nivel
+                const candidatoOffsets = {};
+                
+                // Asignar offsets relativos (entre 0 y 1) a candidatos en cada nivel
+                Object.keys(distribucion.candidatosPorNivel).forEach(nivel => {
+                    const candidatos = [...distribucion.candidatosPorNivel[nivel]].sort();
+                    const totalCandidatos = candidatos.length;
+                    
+                    // Distribuir uniformemente en el rango [0,1]
+                    candidatos.forEach((candidatoId, index) => {
+                        if (!candidatoOffsets[candidatoId]) {
+                            candidatoOffsets[candidatoId] = {};
+                        }
+                        
+                        // Ajuste para mejorar la distribución: dejar más espacio en los extremos
+                        // y distribuir los puntos de manera más uniforme entre 0.1 y 0.9
+                        const margen = 0.1; // 10% de margen en cada extremo
+                        const espacioDisponible = 1 - (2 * margen); // 80% del espacio para distribución
+                        
+                        // Calcular posición relativa en el rango [margen, 1-margen]
+                        candidatoOffsets[candidatoId][nivel] = margen + (espacioDisponible * (index + 1)) / (totalCandidatos + 1);
+                    });
+                });
+                
+                // Dibujar líneas para cada candidato
+                candidatosFiltrados.forEach(candidato => {
+                    // Crear una función de línea para conectar los puntos
+                    const line = d3.line()
+                        .x(d => xScale(d.anio))
+                        .y(d => {
+                            // Usar la escala dinámica para posicionar el punto según su nivel y offset
+                            const nivelBase = d.nivel;
+                            const offset = candidatoOffsets[candidato.id][nivelBase] || 0.5;
+                            return escalasY.mapearNivelAY(nivelBase, offset);
+                        });
+                    
+                    // Crear path para la línea de trayectoria
+                    const candidatoGroup = trayectoriasGroup.append("g")
+                        .attr("class", `candidato candidato-${candidato.id}`)
+                        .attr("data-nombre", candidato.nombre)
+                        .attr("data-id", candidato.id)
+                        .classed("candidate-highlight", searchHighlight === candidato.id)
+                        .classed("candidate-fade", searchHighlight !== null && searchHighlight !== candidato.id);
+                    
+                    // Agrupar puntos por año para manejar múltiples candidaturas en un año
+                    const puntosPorAnio = d3.group(candidato.puntos, d => d.anio);
+                    
+                    // Crear una versión ordenada de los puntos para dibujar la trayectoria principal
+                    const puntosOrdenados = [];
+                    puntosPorAnio.forEach((puntosDeAnio, anio) => {
+                        // Para cada año, agregar el punto con nivel más alto a la trayectoria principal
+                        const puntoParaTrayectoria = puntosDeAnio.reduce((max, current) => 
+                            (current.nivel > max.nivel) ? current : max, puntosDeAnio[0]);
+                        puntosOrdenados.push(puntoParaTrayectoria);
+                    });
+                    
+                    // Ordenar los puntos por año antes de crear la línea
+                    puntosOrdenados.sort((a, b) => a.anio - b.anio);
+                    
+                    // Crear la línea de trayectoria principal con posiciones ajustadas
+                    candidatoGroup.append("path")
+                        .attr("class", "line")
+                        .attr("d", line(puntosOrdenados))
+                        .attr("fill", "none")
+                        .attr("stroke", function() {
+                            // Obtener el color del grupo
+                            const grupo = data.grupos.find(g => g.nombre === candidato.grupo);
+                            return grupo ? grupo.color : "#999";
+                        })
+                        .attr("stroke-width", 1.5)
+                        .attr("stroke-opacity", 0.8);
+                    
+                    // Agregar líneas adicionales para múltiples cargos en un mismo año (bifurcaciones)
+                    puntosPorAnio.forEach((puntosDeAnio, anio) => {
+                        if (puntosDeAnio.length > 1) {
+                            // Ordenar puntos de mayor a menor nivel
+                            puntosDeAnio.sort((a, b) => b.nivel - a.nivel);
+                            
+                            // El primer punto ya está en la trayectoria principal, conectar los demás
+                            for (let i = 1; i < puntosDeAnio.length; i++) {
+                                // Obtener nivel y offset para los puntos
+                                const nivel1 = puntosDeAnio[0].nivel;
+                                const offset1 = candidatoOffsets[candidato.id][nivel1] || 0.5;
+                                const nivel2 = puntosDeAnio[i].nivel;
+                                const offset2 = candidatoOffsets[candidato.id][nivel2] || 0.5;
+                                
+                                // Calcular posiciones Y ajustadas 
+                                const y1 = escalasY.mapearNivelAY(nivel1, offset1);
+                                const y2 = escalasY.mapearNivelAY(nivel2, offset2);
+                                
+                                // Crear una línea desde el punto principal a este punto alternativo
+                                candidatoGroup.append("path")
+                                    .attr("class", "bifurcacion")
+                                    .attr("d", `M${xScale(anio)},${y1} L${xScale(anio)},${y2}`)
+                                    .attr("fill", "none")
+                                    .attr("stroke", function() {
+                                        const grupo = data.grupos.find(g => g.nombre === candidato.grupo);
+                                        return grupo ? grupo.color : "#999";
+                                    })
+                                    .attr("stroke-width", 1.5)
+                                    .attr("stroke-opacity", 0.6)
+                                    .attr("stroke-dasharray", "3,3"); // Línea punteada para bifurcaciones
+                            }
+                        }
+                    });
+                    
+                    // Agregar puntos para cada candidatura con posiciones ajustadas
+                    candidato.puntos.forEach(punto => {
+                        // Calcular la posición Y ajustada con el nuevo sistema de escalado
+                        const nivel = punto.nivel;
+                        const offset = candidatoOffsets[candidato.id][nivel] || 0.5;
+                        const yPos = escalasY.mapearNivelAY(nivel, offset);
+                        
+                        candidatoGroup.append("circle")
+                            .attr("class", "candidato-point")
+                            .attr("cx", xScale(punto.anio))
+                            .attr("cy", yPos)
+                            .attr("r", 4)
+                            .attr("fill", function() {
+                                if (punto.es_peronista) {
+                                    return "purple";
+                                }
+                                // Obtener el color del grupo
+                                const grupo = data.grupos.find(g => g.nombre === candidato.grupo);
+                                return grupo ? grupo.color : "#999";
+                            })
+                            .attr("stroke", function() {
+                                if (punto.es_peronista) {
+                                    return "purple";
+                                }
+                                const grupo = data.grupos.find(g => g.nombre === candidato.grupo);
+                                return grupo ? grupo.color : "#999";
+                            })
+                            .attr("stroke-width", 1.5)
+                            .attr("fill-opacity", punto.electo ? 1 : 0) // Relleno solo si fue electo
+                            .on("mouseover", function(event) {
+                                // Mostrar tooltip
+                                tooltip.transition()
+                                    .duration(200)
+                                    .style("opacity", .9);
+                                    
+                                tooltip.html(`
+                                    <strong>${candidato.nombre}</strong><br/>
+                                    Año: ${punto.anio}<br/>
+                                    Cargo: ${punto.cargo}<br/>
+                                    Partido: ${punto.partido}<br/>
+                                    ${punto.electo ? "Electo: Sí" : "Electo: No"}
+                                `)
+                                    .style("left", (event.pageX + 15) + "px")
+                                    .style("top", (event.pageY - 28) + "px");
+                            })
+                            .on("mouseout", function() {
+                                // Ocultar tooltip
+                                tooltip.transition()
+                                    .duration(500)
+                                    .style("opacity", 0);
+                            });
+                    });
+                    
+                    // Agregar el nombre al final de la trayectoria con posición ajustada
+                    if (puntosOrdenados.length > 0) {
+                        const ultimoPunto = puntosOrdenados[puntosOrdenados.length - 1];
+                        const nivel = ultimoPunto.nivel;
+                        const offset = candidatoOffsets[candidato.id][nivel] || 0.5;
+                        const yPos = escalasY.mapearNivelAY(nivel, offset);
+                        
+                        labelsGroup.append("text")
+                            .attr("class", `candidato-label candidato-label-${candidato.id}`)
+                            .attr("x", xScale(ultimoPunto.anio) + 8)
+                            .attr("y", yPos)
+                            .attr("text-anchor", "start")
+                            .attr("dominant-baseline", "middle")
+                            .attr("font-size", "9px")
+                            .attr("opacity", searchHighlight === candidato.id ? 1 : 0.6)
+                            .text(candidato.nombre);
+                    }
+                });
+                
+                // Actualizar estadísticas
+                updateStats();
+            };
+            
+            // Asegurarse de que el diseño no tenga superposiciones ajustando las alturas dinámicamente
+            function adjustLayout() {
+                const vizHeight = height;
+                const vizContainer = document.getElementById("visualization");
+                
+                // Establecer altura explícita para asegurar que la visualización tenga el espacio adecuado
+                vizContainer.style.height = `${vizHeight}px`;
+                
+                // Asegurarse de que el panel de estadísticas esté posicionado debajo de la visualización
+                const statsPanel = document.querySelector(".stats-panel");
+                if (statsPanel) {
+                    statsPanel.style.marginTop = "30px";
+                }
+            }
+            
+            // Llamar después de renderizar
+            adjustLayout();
+
+            // Manejar el redimensionamiento de la ventana
+            window.addEventListener("resize", debounce(function() {
+                // Limpiar el contenido anterior
+                svg.remove();
+                // Reiniciar la visualización
+                initializeVisualization();
+                // Re-ajustar diseño
+                adjustLayout();
+            }, 250));
+            
+            // Función debounce para evitar múltiples redimensionamientos
+            function debounce(func, wait) {
+                let timeout;
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            }
+            
+            // Renderizar trayectorias inicialmente
+            renderTrayectorias();
+        }
+        
+        function applyFilters() {
+            // Limpiar el conjunto de candidatos visibles
+            candidatosVisibles.clear();
+            
+            // Verificar qué grupos están seleccionados
+            const gruposSeleccionados = Array.from(document.querySelectorAll("#grupos-filter input:checked"))
+                .map(checkbox => checkbox.value);
+                
+            // Verificar filtro de solo electos
+            const soloElectos = document.getElementById("solo-electos").checked;
+            
+            // Filtrar candidatos según grupos y si fueron electos
+            data.candidatos.forEach(candidato => {
+                if (gruposSeleccionados.includes(candidato.grupo)) {
+                    if (!soloElectos || (soloElectos && candidato.electoEnPeronismo)) {
+                        candidatosVisibles.add(candidato.id);
+                    }
+                }
+            });
+            
+            // Renderizar con los filtros aplicados
+            renderTrayectorias();
+        }
+        
+        function togglePeronismHighlight() {
+            const highlighted = document.getElementById("resaltar-peronismo").checked;
+            
+            // Actualizar visibilidad de la línea de peronismo
+            d3.select(".peronismo-line")
+                .style("opacity", highlighted ? 1 : 0.2);
+                
+            d3.select(".peronismo-label")
+                .style("opacity", highlighted ? 1 : 0.2);
+        }
+        
+        function handleSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                clearSearch();
+                return;
+            }
+            
+            // Buscar candidato por nombre
+            const candidatoEncontrado = data.candidatos.find(c => 
+                c.nombre.toLowerCase().includes(searchTerm) && candidatosVisibles.has(c.id));
+                
+            if (candidatoEncontrado) {
+                // Resaltar el candidato encontrado
+                searchHighlight = candidatoEncontrado.id;
+                renderTrayectorias();
+                
+                // Ocultar resultados de búsqueda
+                searchResults.style.display = "none";
+            } else {
+                alert("No se encontró ningún candidato con ese nombre o no está visible con los filtros actuales.");
+            }
+        }
+        
+        function clearSearch() {
+            searchInput.value = "";
+            searchHighlight = null;
+            searchResults.style.display = "none";
+            renderTrayectorias();
+        }
+        
+        function showSearchSuggestions() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm || searchTerm.length < 2) {
+                searchResults.style.display = "none";
+                return;
+            }
+            
+            // Filtrar candidatos que coincidan con la búsqueda y estén visibles
+            const candidatosFiltrados = data.candidatos
+                .filter(c => c.nombre.toLowerCase().includes(searchTerm) && candidatosVisibles.has(c.id))
+                .slice(0, 10); // Limitar a 10 resultados
+                
+            // Mostrar resultados
+            if (candidatosFiltrados.length > 0) {
+                searchResults.innerHTML = "";
+                searchResults.style.display = "block";
+                
+                candidatosFiltrados.forEach(c => {
+                    const resultItem = document.createElement("div");
+                    resultItem.className = "search-result-item";
+                    resultItem.innerText = c.nombre;
+                    resultItem.addEventListener("click", function() {
+                        searchInput.value = c.nombre;
+                        searchHighlight = c.id;
+                        renderTrayectorias();
+                        searchResults.style.display = "none";
+                    });
+                    
+                    searchResults.appendChild(resultItem);
+                });
+            } else {
+                searchResults.style.display = "none";
+            }
+        }
+        
+        function updateStats() {
+            if (!data) return;
+            
+            // Total de trayectorias
+            document.getElementById("total-trayectorias").innerText = data.candidatos.length;
+            
+            // Trayectorias visibles actualmente
+            document.getElementById("visible-trayectorias").innerText = candidatosVisibles.size;
+            
+            // Candidatos electos en el peronismo
+            const electosEnPeronismo = data.candidatos.filter(c => c.electoEnPeronismo).length;
+            document.getElementById("electos-peronismo").innerText = electosEnPeronismo;
+        }
+    </script>
+</body>
+</html>

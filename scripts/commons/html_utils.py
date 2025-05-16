@@ -97,12 +97,51 @@ def generar_pagina_index():
                 font-weight: bold;
             }
             .report-link:hover { background-color: #45a049; }
+            .featured-report {
+                grid-column: 1 / -1;
+                background: linear-gradient(to right, #e3f2fd, #bbdefb);
+                padding: 30px;
+                border-radius: 12px;
+                border-left: 6px solid #2196f3;
+            }
+            .featured-report h3 {
+                font-size: 1.5em;
+                color: #0d47a1;
+                margin-bottom: 20px;
+            }
+            .featured-report p {
+                font-size: 1.1em;
+                margin-bottom: 20px;
+            }
+            .featured-report .report-link {
+                background-color: #2196f3;
+                padding: 10px 20px;
+                font-size: 1.1em;
+            }
+            .featured-report .report-link:hover {
+                background-color: #1976d2;
+            }
         </style>
     </head>
     <body>
         <h1>Índice de Informes Estadísticos</h1>
         <p class="timestamp">Última actualización: """ + fecha_actual + """</p>
           <div class="report-grid">
+            <div class="featured-report">
+                <h3>Visualización Interactiva de Trayectorias Políticas</h3>
+                <p>Explore de manera interactiva las trayectorias políticas de los candidatos peronistas con experiencia previa. 
+                   Esta visualización le permite filtrar por partido de origen, ver solo candidatos electos, buscar personas específicas
+                   y observar patrones en las carreras políticas a lo largo del tiempo.</p>
+                <p><strong>Características:</strong></p>
+                <ul>
+                    <li>Filtrado por partido político de origen</li>
+                    <li>Búsqueda de candidatos específicos</li>
+                    <li>Visualización de trayectorias completas con información detallada</li>
+                    <li>Distinción entre candidaturas exitosas y no exitosas</li>
+                </ul>
+                <a href="visualizacion_trayectorias.html" class="report-link">Ver Visualización Interactiva</a>
+            </div>
+            
             <div class="report-card">
                 <h3>Trayectorias Completas de Legisladores</h3>
                 <p>Registro completo de las carreras políticas de todos los legisladores peronistas electos entre 1946 y 1955, incluyendo su experiencia antes, durante y después de su afiliación peronista.</p>

@@ -16,6 +16,7 @@ from scripts.modules import informe_trayectorias_interpartidarias
 from scripts.modules import informe_trayectorias_completas
 from scripts.modules import informe_candidatos_1946
 from scripts.modules import informe_candidatos_peronistas
+from scripts.modules import visualizacion_trayectorias_interactivas
 from scripts.commons.html_utils import generar_pagina_index
 
 def imprimir_separador(mensaje):
@@ -84,16 +85,25 @@ def main():
             print("✗ Error al generar el informe de candidatos de 1946")
     except Exception as e:
         print(f"✗ Error en la generación del informe de candidatos de 1946: {e}")
+      # 5. Generar visualización interactiva de trayectorias
+    imprimir_separador("GENERANDO VISUALIZACIÓN INTERACTIVA DE TRAYECTORIAS")
     
-    # 5. Generar la página de índice
+    try:
+        if visualizacion_trayectorias_interactivas.generar_visualizacion_interactiva():
+            # El mensaje de éxito ya está en la función generadora
+            informes_generados.append("Visualización Interactiva de Trayectorias")
+        else:
+            print("✗ Error al generar la visualización interactiva de trayectorias")
+    except Exception as e:
+        print(f"✗ Error en la generación de la visualización interactiva de trayectorias: {e}")
+    
+    # 6. Generar la página de índice
     imprimir_separador("GENERANDO PÁGINA DE ÍNDICE")
     
     try:
         index_path = generar_pagina_index()
     except Exception as e:
-        print(f"✗ Error al generar la página de índice: {e}")
-    
-    # Mostrar resumen final
+        print(f"✗ Error al generar la página de índice: {e}")    # Mostrar resumen final
     fin = datetime.now()
     duracion = fin - inicio
     
@@ -101,7 +111,7 @@ def main():
     print(f"Hora de inicio: {inicio.strftime('%H:%M:%S')}")
     print(f"Hora de finalización: {fin.strftime('%H:%M:%S')}")
     print(f"Duración total: {duracion.total_seconds():.2f} segundos")
-    print(f"\nInformes generados correctamente: {len(informes_generados)} de 4")
+    print(f"\nInformes generados correctamente: {len(informes_generados)} de 5")
     
     for informe in informes_generados:
         print(f"  - {informe}")
