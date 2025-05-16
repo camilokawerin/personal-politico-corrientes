@@ -1,23 +1,25 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.14
--- http://www.phpmyadmin.net
+-- version 4.9.11
+-- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 13-03-2015 a las 20:56:07
--- Versión del servidor: 5.6.17
--- Versión de PHP: 5.5.12
+-- Servidor: 127.0.0.1:3306
+-- Tiempo de generación: 15-05-2025 a las 13:02:42
+-- Versión del servidor: 5.7.44
+-- Versión de PHP: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `personalpolitico`
+-- Base de datos: `personal-politico-corrientes`
 --
 
 -- --------------------------------------------------------
@@ -26,6 +28,7 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `listado`
 --
 
+DROP TABLE IF EXISTS `listado`;
 CREATE TABLE IF NOT EXISTS `listado` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ID_Persona` int(11) DEFAULT NULL,
@@ -49,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `listado` (
   `Probabilidad_error` varchar(255) DEFAULT NULL,
   `Observaciones` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2884 ;
+) ENGINE=InnoDB AUTO_INCREMENT=2884 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `listado`
@@ -375,11 +378,11 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (317, 171, 0, 'Diego', 'Balbastro Reguera', 'Comunista – Demócrata Progresista e Independientes', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (318, 172, 0, 'Félix María', 'Balbuena', 'Radical Antipersonalista', 'Senador', 'Provincial', 1929, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'Sin datos sobre el sorteo'),
 (319, 173, 0, 'José Elidio', 'Balbuena', 'Peronista', 'Elector', 'Provincial', 1948, '2da', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(320, 174, 0, 'Pedro', 'Balbuena', 'Demócrata Nacional', 'Diputado', 'Provincial', 1951, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
-INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
+(320, 174, 0, 'Pedro', 'Balbuena', 'Demócrata Nacional', 'Diputado', 'Provincial', 1951, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (321, 175, 1, 'Bernardo', 'Balestra', 'Pacto Autonomista – Liberal', 'Elector', 'Provincial', 1917, 's/d', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (322, 175, 1, 'Bernardo', 'Balestra', 'Liberal', 'Diputado', 'Provincial', 1922, '3ra', 1, 0, 1922, 1925, '', '', '', '', '', '', 'null'),
-(323, 176, 0, 'Erasmo', 'Balestra', 'Socialismo', 'Diputado', 'Provincial', 1933, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(323, 176, 0, 'Erasmo', 'Balestra', 'Socialismo', 'Diputado', 'Provincial', 1933, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
+INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
 (324, 177, 0, 'J. León', 'Balestra', 'Liberal', 'Diputado', 'Provincial', 1924, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (325, 178, 0, 'Juan (h)', 'Balestra', 'Liberal', 'Diputado', 'Provincial', 1933, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (326, 179, 1, 'Raúl', 'Balestra', 'Pacto Autonomista – Liberal', 'Elector', 'Provincial', 1921, '1ra', 1, 0, 0, 0, '', '', '', '', '', '35', 'Hay mucho lapso de tiempo'),
@@ -697,13 +700,13 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (638, 327, 1, 'José', 'Cantero Ley', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1928, '3ra', 0, 0, 0, 0, '', '', '', '', '', '50', 'No coincide el nombre ni el apellido'),
 (639, 327, 1, 'José María', 'Canteros', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1937, '3ra', 1, 0, 1937, 1940, '', '', '', '', '', '', 'null'),
 (640, 327, 1, 'José María', 'Canteros', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1940, '3ra', 1, 0, 1940, 1942, '', '', 'Vicepresidente 1º desde 1942; mandato interrumpido por la intervención federal', '', '', '', 'null'),
-(641, 327, 1, 'José María', 'Canteros', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
-INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
+(641, 327, 1, 'José María', 'Canteros', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (642, 328, 0, 'Silvano T.', 'Capará', 'Radical (Comité Nacional)', 'Diputado', 'Provincial', 1946, '1ra', 1, 0, 1946, 1947, '', '', '', '', '', '', 'null'),
 (643, 329, 0, 'Mateo', 'Carabanti', 'Comunista', 'Elector', 'Provincial', 1935, 'Todas', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (644, 330, 0, 'Antonio Clemente', 'Carande', 'Radical (Comité Nacional)', 'Diputado', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (645, 331, 0, 'Justino', 'Carballo Romero', 'Demócrata Nacional (Distrito Corrientes)', 'Senador', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
-(646, 332, 0, 'Maximino', 'Carbó', 'Liberal', 'Diputado', 'Provincial', 1935, '2da', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
+(646, 332, 0, 'Maximino', 'Carbó', 'Liberal', 'Diputado', 'Provincial', 1935, '2da', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null');
+INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
 (647, 333, 0, 'Enrique', 'Carbone', 'Liberal', 'Senador', 'Provincial', 1923, '2da', 1, 0, 1923, 1929, '', '', '', '', '', '', 'null'),
 (648, 334, 0, 'Juan', 'Carbone', 'Liberal', 'Elector', 'Provincial', 1925, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (649, 335, 0, 'Teófilo Alberto', 'Carbone', 'Laborista Correntino', 'Elector', 'Provincial', 1946, '1ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -870,8 +873,8 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (810, 422, 1, 'Dalmiro', 'Cuadrado', 'Socialista', 'Elector', 'Provincial', 1935, 'Todas', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (811, 423, 0, 'Hernán A.', 'Cuneo', 'Concentración Cívica', 'Elector', 'Provincial', 1919, 's/d', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (812, 424, 0, 'Félix', 'Curoto', 'Radical (Junta Reorganizadora)', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(813, 425, 0, 'Luis Romano', 'D''Argenio', 'Laborista Correntino', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(814, 426, 1, 'Luis F.', 'D''Arrigo', 'Radical (Comité Nacional)', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(813, 425, 0, 'Luis Romano', 'D\'Argenio', 'Laborista Correntino', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(814, 426, 1, 'Luis F.', 'D\'Arrigo', 'Radical (Comité Nacional)', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (815, 426, 1, 'Luis F.', 'D’Arrigo', 'Radical', 'Senador', 'Provincial', 1954, 's/d', 1, 0, 1955, 1955, '', '', 'Mandato interrumpido por el golpe de Estado', '', '', '', 'null'),
 (816, 427, 1, 'Alberto', 'Da Silva', 'Radical Nacionalista', 'Diputado', 'Provincial', 1924, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (817, 427, 1, 'Alberto', 'Da Silva', 'Radical personalista', 'Diputado', 'Provincial', 1927, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -1021,15 +1024,15 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (961, 503, 1, 'Reinaldo', 'Díaz Colodredo', 'Liberal Pactista', 'Senador', 'Provincial', 1931, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (962, 504, 1, 'Roque', 'Díaz Colodredo', 'Autonomista', 'Elector', 'Provincial', 1935, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (963, 504, 1, 'Roque', 'Díaz Colodredo', 'Concordancia', 'Elector', 'Provincial', 1939, 's/d', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(964, 505, 1, 'Joaquín', 'Díaz de Vivar', 'Liberal', 'Diputado', 'Provincial', 1911, '2da', 1, 0, 1911, 1914, '', '', '', '', '', '', 'null');
-INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
+(964, 2884, 1, 'Joaquín', 'Díaz de Vivar', 'Liberal', 'Diputado', 'Provincial', 1911, '2da', 1, 0, 1911, 1914, '', '', '', '', '', '', 'null'),
 (965, 505, 1, 'Joaquín', 'Díaz de Vivar', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1929, '2da', 1, 0, 1929, 1929, '', '', 'Mandato interrumpido por la intervención federal', '', '', '', 'null'),
 (966, 505, 1, 'Joaquín', 'Díaz de Vivar', 'Radical Personalista', 'Elector', 'Provincial', 1935, '1ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
 (967, 505, 1, 'Joaquín', 'Díaz de Vivar', 'Radical (Junta Reorganizadora)', 'Diputado', 'Nacional', 1946, 'n/a', 1, 0, 1946, 1948, '', 'Doctor', '', '', '', '', 'null'),
 (968, 505, 1, 'Joaquín', 'Díaz de Vivar', 'Radical (Junta Reorganizadora)', 'Elector', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
 (969, 505, 1, 'Joaquín', 'Díaz de Vivar', 'Peronista', 'Diputado', 'Nacional', 1948, 'n/a', 1, 0, 1948, 1952, '', 'Doctor', '', '', '', '', 'null'),
 (970, 505, 1, 'Joaquín', 'Díaz de Vivar', 'Peronista', 'Diputado', 'Nacional', 1951, '5ta', 1, 0, 1951, 1955, 'v', '', 'Mandato interrumpido por el golpe de Estado', '', '', '', 'null'),
-(971, 506, 1, 'Julián', 'Díaz de Vivar', 'Liberal', 'Diputado', 'Provincial', 1907, '3ra', 1, 0, 1907, 1910, '', 'Doctor', 'Vicepresidente 1º', '', '', '', 'null'),
+(971, 506, 1, 'Julián', 'Díaz de Vivar', 'Liberal', 'Diputado', 'Provincial', 1907, '3ra', 1, 0, 1907, 1910, '', 'Doctor', 'Vicepresidente 1º', '', '', '', 'null');
+INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
 (972, 506, 1, 'Julián', 'Díaz de Vivar', 'Radical Disidente', 'Senador', 'Provincial', 1919, '1ra', 1, 0, 1919, 1921, '', '', '', '', '', '', 'null'),
 (973, 507, 1, 'Justo', 'Díaz de Vivar', 'Radical Disidente', 'Diputado', 'Nacional', 1918, 'n/a', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (974, 507, 1, 'Justo', 'Díaz de Vivar', 'Radical', 'Diputado', 'Nacional', 1922, 'n/a', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -1340,8 +1343,7 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (1279, 687, 0, 'Alberto', 'García', 'Radical Personalista', 'Elector', 'Provincial', 1935, '1ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
 (1280, 688, 0, 'Juan Carlos', 'García', 'Peronista', 'Diputado', 'Provincial', 1951, '1ra', 1, 0, 1952, 1955, '', '', 'Mandato de 3 años cumplido', '', '', '', 'null'),
 (1281, 689, 0, 'Ruel Martín', 'García', 'Peronista', 'Diputado', 'Provincial', 1954, '4ta', 1, 0, 1955, 1955, '', '', 'Mandato interrumpido por el golpe de Estado', 'Martín Joel', '', '', 'null'),
-(1282, 690, 1, 'Vicente', 'García', 'Alianza Socialista – Demócrata Progresista – Juventud Liberal', 'Diputado', 'Provincial', 1931, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
-INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
+(1282, 690, 1, 'Vicente', 'García', 'Alianza Socialista – Demócrata Progresista – Juventud Liberal', 'Diputado', 'Provincial', 1931, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1283, 690, 1, 'Vicente', 'García', 'Alianza Socialista – Demócrata Progresista – Juventud Liberal', 'Senador', 'Provincial', 1931, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1284, 690, 1, 'Vicente', 'García', 'Socialista', 'Diputado', 'Provincial', 1933, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1285, 690, 1, 'Vicente', 'García', 'Socialista', 'Diputado', 'Provincial', 1934, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -1352,7 +1354,8 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (1290, 694, 1, 'José Antonio', 'Garín', 'Radical (Junta Reorganizadora)', 'Elector', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1291, 695, 1, 'Federico', 'Garrido', 'Pacto Autonomista – Liberal', 'Diputado', 'Nacional', 1906, 'n/a', 1, 0, 1906, 1910, '', '', '', '', '', '', 'null'),
 (1292, 695, 1, 'Federico', 'Garrido', 'Pacto Autonomista – Liberal', 'Diputado', 'Nacional', 1908, 'n/a', 1, 0, 1908, 1912, '', '', '', '', '', '', 'null'),
-(1293, 695, 1, 'Federico', 'Garrido', 'Pacto Autonomista – Liberal Martinista', 'Elector', 'Provincial', 1909, '1ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1293, 695, 1, 'Federico', 'Garrido', 'Pacto Autonomista – Liberal Martinista', 'Elector', 'Provincial', 1909, '1ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null');
+INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
 (1294, 695, 1, 'Federico', 'Garrido', 'Pacto Autonomista – Liberal', 'Diputado', 'Nacional', 1910, 'n/a', 1, 0, 1910, 1914, '', '', '', '', '', '', 'null'),
 (1295, 696, 0, 'Fortunato', 'Garrido', 'Autonomista Principista', 'Diputado', 'Provincial', 1920, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1296, 697, 0, 'Jorge Antonio', 'Garrido', 'Peronista', 'Diputado', 'Provincial', 1948, '1ra', 1, 0, 1948, 1952, '', '', '', '', '', '', 'null'),
@@ -1663,8 +1666,7 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (1601, 871, 0, 'Carlos', 'Levatti', 'Liberal', 'Diputado', 'Provincial', 1931, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1602, 872, 1, 'Emiliano P.', 'Leyes', 'Liberal', 'Diputado', 'Provincial', 1931, '1ra', 1, 0, 1932, 1933, '', '', '', '', '', '', 'null'),
 (1603, 872, 1, 'Emiliano P.', 'Leyes', 'Liberal', 'Diputado', 'Provincial', 1933, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1604, 872, 1, 'Emiliano P.', 'Leyes', 'Liberal', 'Elector', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
-INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
+(1604, 872, 1, 'Emiliano P.', 'Leyes', 'Liberal', 'Elector', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1605, 873, 0, 'Joaquín R.', 'Leyes', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1606, 874, 0, 'José', 'Leyes', 'Peronista', 'Diputado', 'Provincial', 1951, '1ra', 1, 0, 1952, 1955, '', '', 'Mandato de 3 años cumplido', '', '', '', 'null'),
 (1607, 875, 0, 'Urbano Salvador', 'Leyes', 'Liberal', 'Senador', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -1677,7 +1679,8 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (1614, 880, 0, 'Federico', 'Liesegan', 'Liberal', 'Senador', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1615, 881, 0, 'Alberto', 'Lifschitz', 'Demócrata Nacional (Distrito Corrientes)', 'Elector', 'Nacional', 1946, 'n/a', 0, 0, 0, 0, '', 'Doctor', 'Renunció antes de las elecciones y el partido votó a los candidatos de la Unión Cívica Radical (Comité Nacional)', '', '', '', 'null'),
 (1616, 882, 1, 'Feliciano N.', 'Liñero', 'Demócrata Nacional (Autonomista)', 'Diputado', 'Provincial', 1931, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1617, 882, 1, 'Feliciano N.', 'Liñero', 'Peronista', 'Elector', 'Provincial', 1948, '2da', 1, 0, 0, 0, '', '', '', '', 'Lañero', '', 'null'),
+(1617, 882, 1, 'Feliciano N.', 'Liñero', 'Peronista', 'Elector', 'Provincial', 1948, '2da', 1, 0, 0, 0, '', '', '', '', 'Lañero', '', 'null');
+INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
 (1618, 883, 0, 'Manuel', 'Liper', 'Radical (Sotista Y Morista)', 'Diputado', 'Provincial', 1923, '2da', 1, 0, 1923, 1926, '', '', '', '', '', '', 'No aparece entre los diputados que cesaron en 1926 mencionados por Solís Carnicer (2006, 273); la fecha de fin de mandato es estimativa'),
 (1619, 884, 0, 'José del R.', 'Llames', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1937, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1620, 885, 1, 'Carlos M.', 'Llano', 'Autonomista', 'Diputado', 'Provincial', 1922, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -1985,8 +1988,7 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (1922, 1037, 1, 'Adolfo E.', 'Mohando', 'Pacto Autonomista – Liberal', 'Elector', 'Provincial', 1917, 's/d', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1923, 1037, 1, 'Adolfo E.', 'Mohando', 'Concentración Cívica', 'Elector', 'Provincial', 1919, 's/d', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1924, 1037, 1, 'Adolfo E.', 'Mohando', 'Liberal', 'Senador', 'Provincial', 1927, '1ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
-(1925, 1037, 1, 'Adolfo E.', 'Mohando', 'Liberal', 'Elector', 'Provincial', 1935, '3ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null');
-INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
+(1925, 1037, 1, 'Adolfo E.', 'Mohando', 'Liberal', 'Elector', 'Provincial', 1935, '3ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
 (1926, 1038, 0, 'José R.', 'Mohando', 'Liberal', 'Diputado', 'Provincial', 1935, '2da', 1, 0, 1935, 1938, '', '', '', '', '', '', 'null'),
 (1927, 1039, 1, 'Julio V.', 'Mohando', 'Radical (Comité Nacional)', 'Elector', 'Nacional', 1946, 'n/a', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1928, 1039, 1, 'Julio V.', 'Mohando', 'Radical', 'Elector', 'Provincial', 1948, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'Harvey tiene Luis Lomónaco en este lugar'),
@@ -2001,7 +2003,8 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (1937, 1042, 1, 'Manuel Vicente', 'Molina', 'Autonomista', 'Senador', 'Provincial', 1919, '1ra', 1, 0, 1919, 1921, '', '', '', '', '', '', 'null'),
 (1938, 1042, 1, 'Manuel Vicente', 'Molina', 'Pacto Autonomista – Liberal', 'Elector', 'Provincial', 1921, '3ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1939, 1042, 1, 'Manuel Vicente', 'Molina', 'Autonomista', 'Senador', 'Provincial', 1921, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1940, 1042, 1, 'Manuel Vicente', 'Molina', 'Concentración Nacional', 'Elector', 'Nacional', 1922, 'n/a', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1940, 1042, 1, 'Manuel Vicente', 'Molina', 'Concentración Nacional', 'Elector', 'Nacional', 1922, 'n/a', 1, 0, 0, 0, '', '', '', '', '', '', 'null');
+INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
 (1941, 1042, 1, 'Manuel Vicente', 'Molina', 'Autonomista', 'Elector', 'Provincial', 1925, '3ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1942, 1042, 1, 'Manuel Vicente', 'Molina', 'Autonomista', 'Senador', 'Provincial', 1927, '1ra', 1, 0, 1927, 1927, '', '', '', '', '', '', 'null'),
 (1943, 1042, 1, 'Manuel Vicente', 'Molina', 'Demócrata Nacional (Autonomista)', 'Senador', 'Provincial', 1931, '1ra', 1, 0, 1932, 1933, '', '', 'Falleció en el cargo', '', '', '', 'null'),
@@ -2304,8 +2307,7 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (2240, 1205, 1, 'F. Gerardo', 'Polo', 'Liberal', 'Elector', 'Provincial', 1935, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2241, 1205, 1, 'P. Gerardo (h)', 'Polo', 'Liberal', 'Diputado', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', 'Doctor', '', '', '', '50', 'No coincide el (h) ni el nombre'),
 (2242, 1206, 0, 'Milcíades', 'Ponce de León', 'Peronista', 'Diputado', 'Provincial', 1951, '1ra', 0, 1, 0, 0, '', '', '', '', '', '', 'null'),
-(2243, 1207, 0, 'José', 'Pont', 'Radical', 'Elector', 'Provincial', 1948, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
-INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
+(2243, 1207, 0, 'José', 'Pont', 'Radical', 'Elector', 'Provincial', 1948, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2244, 1208, 0, 'Eliseo', 'Popolizio Verón', 'Radical', 'Diputado', 'Provincial', 1948, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'Harvey tiene Francisco Sandoval en este lugar'),
 (2245, 1209, 1, 'Carlos A.', 'Porta', 'Demócrata Nacional (Autonomista)', 'Diputado', 'Provincial', 1931, '3ra', 1, 0, 1932, 1934, '', 'Doctor', '', '', '', '', 'null'),
 (2246, 1209, 1, 'Carlos A.', 'Porta', 'Autonomista', 'Diputado', 'Provincial', 1934, '3ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
@@ -2322,7 +2324,8 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (2257, 1214, 0, 'Celestino', 'Pozzi', 'Liberal', 'Diputado', 'Provincial', 1920, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2258, 1215, 0, 'Tomás L.', 'Pozzi', 'Liberal', 'Elector', 'Provincial', 1935, '2da', 1, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
 (2259, 1216, 1, 'Mariano', 'Prado', 'Autonomista', 'Elector', 'Provincial', 1919, '1ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(2260, 1216, 1, 'Mariano', 'Prado', 'Demócrata Nacional (Autonomista)', 'Elector', 'Provincial', 1931, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(2260, 1216, 1, 'Mariano', 'Prado', 'Demócrata Nacional (Autonomista)', 'Elector', 'Provincial', 1931, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
+INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
 (2261, 1216, 1, 'Mariano', 'Prado', 'Autonomista', 'Elector', 'Provincial', 1935, '2da', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2262, 1217, 0, 'Humberto Carlos', 'Prieto', 'Comunista – Demócrata Progresista e Independientes', 'Diputado', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2263, 1218, 0, 'Carlos', 'Prudencio Isler', 'Radical (Comité Nacional)', 'Elector', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', 'Issler', '', 'null'),
@@ -2493,11 +2496,11 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (2428, 1302, 1, 'Facundo', 'Romero', 'Socialista', 'Diputado', 'Provincial', 1934, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2429, 1302, 1, 'Facundo', 'Romero', 'Socialista', 'Elector', 'Provincial', 1935, 'Todas', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2430, 1303, 0, 'Fernando', 'Romero', 'Socialismo Tradicional', 'Elector', 'Nacional', 1937, 'n/a', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(2431, 1304, 1, 'Juan', 'Romero', 'Demócrata Nacional (Distrito Corrientes)', 'Elector', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'Tomado de Harvey, en Solís Carnicer todos los de la 3ra sección corresponden a candidatos a diputados provinciales'),
+(2431, 2885, 1, 'Juan', 'Romero', 'Demócrata Nacional (Distrito Corrientes)', 'Elector', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'Tomado de Harvey, en Solís Carnicer todos los de la 3ra sección corresponden a candidatos a diputados provinciales'),
 (2432, 1304, 1, 'Julio', 'Romero', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(2433, 1304, 1, 'Juan', 'Romero', 'Demócrata Nacional', 'Senador', 'Provincial', 1948, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(2433, 2885, 1, 'Juan', 'Romero', 'Demócrata Nacional', 'Senador', 'Provincial', 1948, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2434, 1304, 1, 'Julio', 'Romero', 'Peronista', 'Senador', 'Provincial', 1951, '1ra', 1, 0, 1952, 1955, '', '', 'Mandato interrumpido por el golpe de Estado', '', '', '', 'null'),
-(2435, 1304, 1, 'Juan', 'Romero', 'Demócrata Nacional', 'Senador', 'Provincial', 1951, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(2435, 2885, 1, 'Juan', 'Romero', 'Demócrata Nacional', 'Senador', 'Provincial', 1951, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2436, 1305, 0, 'Justiniano', 'Romero', 'Radical (Junta Reorganizadora)', 'Elector', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2437, 1306, 0, 'Justo', 'Romero', 'Liberal', 'Diputado', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2438, 1307, 1, 'Luciano', 'Romero', 'Pacto Autonomista – Liberal (Autonomista)', 'Diputado', 'Provincial', 1911, '2da', 1, 0, 1911, 1914, '', '', '', '', '', '', 'En el anexo aparece en la 3ra'),
@@ -2579,7 +2582,7 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (2514, 1346, 0, 'Martín', 'Sánchez Negrette', 'Demócrata Nacional (Autonomista)', 'Elector', 'Provincial', 1946, '3ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2515, 1347, 0, 'Salvador', 'Sánchez Negrette', 'Demócrata Nacional (Autonomista)', 'Diputado', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'Tomado de Harvey'),
 (2516, 1348, 1, 'Miguel Angel', 'Sanchez Velazco', 'Peronista', 'Diputado', 'Provincial', 1948, '2da', 1, 0, 1948, 1952, '', '', '', '', '', '', 'null'),
-(2517, 1348, 1, 'Miguel', 'Sanchez Velazco', 'Peronista', 'Diputado', 'Provincial', 1951, '2da', 1, 0, 1952, 1955, '', '', 'Mandato interrumpido por el golpe de Estado', '', '', '', 'null'),
+(2517, 1348, 1, 'Miguel Angel', 'Sanchez Velazco', 'Peronista', 'Diputado', 'Provincial', 1951, '2da', 1, 0, 1952, 1955, '', '', 'Mandato interrumpido por el golpe de Estado', '', '', '', 'null'),
 (2518, 1349, 0, 'Carlos', 'Sanders', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2519, 1350, 0, 'Manuel', 'Santos Delgado', 'Peronista', 'Senador', 'Provincial', 1951, '4ta', 0, 1, 0, 0, '', '', '', '', '', '', 'null'),
 (2520, 1351, 0, 'Luis', 'Saporitti', 'Peronista', 'Diputado', 'Nacional', 1948, 'n/a', 1, 0, 1948, 1952, '', '', '', '', '', '', 'null'),
@@ -2627,8 +2630,7 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (2562, 1376, 0, 'Samuel E.', 'Sierra', 'Liberal', 'Elector', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2563, 1377, 0, 'Pedro', 'Silanas', 'Liberal', 'Elector', 'Provincial', 1946, '1ra', 1, 0, 0, 0, '', '', '', 'Pedro J. M.', 'Sillanes', '', 'null'),
 (2564, 1378, 0, 'Florentín', 'Silva', 'Demócrata Nacional (Autonomista)', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', 'Florentino', '', '', 'null'),
-(2565, 1379, 1, 'Juan', 'Silva', 'Pacto Autonomista – Liberal Martinista', 'Elector', 'Provincial', 1909, '3ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null');
-INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
+(2565, 1379, 1, 'Juan', 'Silva', 'Pacto Autonomista – Liberal Martinista', 'Elector', 'Provincial', 1909, '3ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2566, 1379, 1, 'Juan J.', 'Silva', 'Liberal', 'Diputado', 'Provincial', 1925, '3ra', 0, 0, 0, 0, '', '', '', '', '', '50', 'No coincide un nombre y hay un lapso muy amplio con el anterior cargo'),
 (2567, 1380, 0, 'Pedro Pablo', 'Silva', 'Liberal', 'Diputado', 'Provincial', 1927, '1ra', 0, 1, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
 (2568, 1381, 0, 'Zenón', 'Silva', 'Socialista', 'Diputado', 'Provincial', 1915, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -2648,7 +2650,8 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (2582, 1388, 1, 'Agustín', 'Solari', 'Liberal Pactista', 'Senador', 'Provincial', 1931, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2583, 1388, 1, 'Agustín', 'Solari', 'Liberal Pactista', 'Senador', 'Provincial', 1931, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2584, 1389, 1, 'Alejandro', 'Solari', 'Demócrata Nacional (Autonomista)', 'Elector', 'Nacional', 1931, 'n/a', 1, 0, 0, 0, '', '', '', '', '', '25', 'No coincide un nombre'),
-(2585, 1389, 1, 'Alejandro J.', 'Solari', 'Demócrata Nacional (Autonomista)', 'Elector', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(2585, 1389, 1, 'Alejandro J.', 'Solari', 'Demócrata Nacional (Autonomista)', 'Elector', 'Provincial', 1946, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
+INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
 (2586, 1389, 1, 'Alejandro J.', 'Solari', 'Demócrata Nacional (Autonomista)', 'Senador', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2587, 1389, 1, 'Alejandro', 'Solari Ballesteros', 'Demócrata Nacional', 'Diputado', 'Provincial', 1948, '1ra', 0, 0, 0, 0, '', '', '', '', '', '25', 'No coincide el apellido'),
 (2588, 1390, 1, 'Antonio', 'Solari', 'Pacto Autonomista – Liberal Martinista', 'Diputado', 'Provincial', 1908, '2da', 1, 0, 1908, 1909, '', '', 'Presidente', '', '', '', 'null'),
@@ -2947,6 +2950,7 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (2881, 1546, 0, 'Gregorio', 'Zuliani', 'Comunista – Demócrata Progresista e Independientes', 'Senador', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2882, 1547, 0, 'Juan Ricardo', 'Zuviría', 'Concentración Cívica', 'Elector', 'Provincial', 1919, 's/d', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2883, 1548, 0, 'Santiago', 'Zwanger', 'Socialista', 'Diputado', 'Provincial', 1915, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null');
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
