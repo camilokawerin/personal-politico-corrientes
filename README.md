@@ -114,3 +114,31 @@ Los informes se generan en HTML y se guardan en la carpeta `informes/`, junto co
 ## Próximamente
 
 Para facilitar la investigación, próximamente estará disponible el sistema [Prosopografia](https://github.com/camilokawerin/prosopografia) que permitirá realizar búsquedas, editar los atributos de cada persona y establecer relaciones políticas, de parentesco o derivadas de espacios de sociabilidad.
+
+## Guía para desarrollo de scripts
+
+Al extender o modificar los scripts de análisis de datos, es importante seguir estas reglas para mantener la consistencia y la precisión en los resultados:
+
+### Conteo de personas únicas
+
+- **Regla fundamental**: Al hacer cálculos estadísticos a partir de las candidaturas, siempre se deben contar personas únicas. Si una persona tiene más de una candidatura, se deben concatenar o reducir a uno solo los datos relevantes.
+- **Implementación**: Usar `GROUP BY ID_Persona` en consultas SQL o agrupar por este campo en pandas.
+- **Ejemplo**: Si una persona fue candidata varias veces por diferentes partidos, debe contarse una sola vez en el total, pero pueden concatenarse sus partidos en un campo separado para análisis de trayectoria.
+
+### Trayectorias interpartidarias
+
+- Identificar primero la fecha de la primera candidatura peronista de cada persona.
+- Solo considerar como "experiencia previa" las candidaturas anteriores a esa fecha.
+- Usar `MIN(Anno)` agrupando por `ID_Persona` al determinar el inicio de la trayectoria peronista.
+
+### Visualizaciones
+
+- Limitar los gráficos a mostrar las 10 categorías más frecuentes para mejor legibilidad.
+- Incluir siempre títulos descriptivos y etiquetas en los ejes.
+- Usar esquemas de color consistentes: azul para datos generales, verde para periodos temporales, rojo para cargos.
+
+### Generación de HTML
+
+- Asegurarse de usar codificación UTF-8 en todos los archivos HTML generados.
+- Incluir metadatos de fecha y hora de generación en cada informe.
+- Proporcionar navegación entre informes mediante enlaces a la página índice.
