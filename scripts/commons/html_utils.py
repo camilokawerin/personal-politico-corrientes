@@ -3,6 +3,12 @@ HTML generation utilities for creating reports.
 """
 from datetime import datetime
 
+def formato_decimal(valor, decimales=1):
+    """Formatea un valor decimal usando coma como separador decimal"""
+    if isinstance(valor, (int, float)):
+        return str(round(valor, decimales)).replace('.', ',')
+    return valor
+
 def generar_encabezado_html(titulo):
     """
     Genera el encabezado estándar para un informe HTML

@@ -26,11 +26,24 @@ from scripts.commons.visualization import (
 )
 from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html
 
+def categorizar_partido(partido):
+    """Categoriza un partido según su familia política"""
+    partido_lower = partido.lower() if partido else ""
+    if 'radical' in partido_lower:
+        return 'Radicales'
+    elif 'autonomista' in partido_lower:
+        return 'Autonomistas'
+    elif 'liberal' in partido_lower:
+        return 'Liberales'
+    else:
+        return 'Otros'
+
 def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_previos, detalle_trayectorias, ruta_grafico_partidos=None, ruta_grafico_periodos=None):
     """Genera un informe HTML con los datos de todos los candidatos peronistas entre 1946 y 1955"""
     # Calcular estadísticas para el resumen
     total_candidatos = len(candidatos_data)
-    candidatos_con_experiencia = [c for c in candidatos_data if c.get('tiene_experiencia_previa', False)]
+    # Corregir la verificación para asegurar que el valor es estrictamente True
+    candidatos_con_experiencia = [c for c in candidatos_data if c.get('tiene_experiencia_previa') == True]
     total_con_experiencia = len(candidatos_con_experiencia)
     porcentaje_con_experiencia = (total_con_experiencia / total_candidatos) * 100 if total_candidatos > 0 else 0
     
@@ -85,7 +98,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
             body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
             h1, h2, h3, h4 { color: #333; }
             h2 { margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-            h3 { margin-top: 25px; padding: 5px; }
+            h3 { margin-top: 0; padding: 5px; }
             h4 { margin-top: 15px; border-left: 3px solid #4CAF50; padding-left: 10px; }
             table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
             th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -100,7 +113,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
             .sin-experiencia { color: #999; font-style: italic; }
             .candidato-electo { font-weight: bold; }
             .stat-highlight { font-weight: bold; color: #0066cc; }
-            .tipo-cargo-section { margin-top: 30px; border-top: 1px dashed #999; padding-top: 20px; }
+            .tipo-cargo-section { padding-top: 15px; }
             .section-title { padding: 10px; text-align: left; border: none; margin-bottom: 0; margin-top: 0; }
             .candidate-section { background-color: white; padding: 10px; border: 1px solid #ddd; margin-bottom: 20px; }
             .full-width-box { margin-bottom: 20px; padding: 20px; background-color: #f5f5f5; border-left: 4px solid #4CAF50; width: 100%; box-sizing: border-box; }
@@ -188,6 +201,51 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 <td>100%</td>
                 <td></td>
                 <td></td>
+            </tr>
+        </table>
+        """
+        
+        # NUEVA TABLA: Agrupación por familias políticas
+        # Agrupar los partidos por categoría
+        categorias_partidos = Counter()
+        for partido in datos_partidos_previos:
+            categoria = categorizar_partido(partido['Partido_Previo'])
+            categorias_partidos[categoria] += partido['Cantidad_Candidatos']
+        
+        # Agregar tabla de categorías de partidos
+        html += """
+        <h3>Agrupación por familias políticas</h3>
+        <p>Distribución de candidatos peronistas según la familia política a la que pertenecieron previamente.</p>
+        <table>
+            <tr>
+                <th>Familia Política</th>
+                <th>Cantidad de Candidatos</th>
+                <th>Porcentaje</th>
+            </tr>
+        """
+        
+        # Mostrar las categorías en orden específico
+        orden_categorias = ["Radicales", "Autonomistas", "Liberales", "Otros"]
+        total_categorias = sum(categorias_partidos.values())
+        
+        for categoria in orden_categorias:
+            cantidad = categorias_partidos.get(categoria, 0)
+            if cantidad > 0:
+                porcentaje = (cantidad / total_categorias) * 100 if total_categorias > 0 else 0
+                html += f"""
+                <tr>
+                    <td>{categoria}</td>
+                    <td>{cantidad}</td>
+                    <td>{porcentaje:.2f}%</td>
+                </tr>
+                """
+        
+        # Añadir fila de totales para la tabla de categorías
+        html += f"""
+            <tr style="font-weight: bold; background-color: #f2f2f2;">
+                <td>Total</td>
+                <td>{total_categorias}</td>
+                <td>100%</td>
             </tr>
         </table>
         """
@@ -595,6 +653,9 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                                    key=lambda x: x[1]['cantidad'], 
                                    reverse=True)
         
+        # Crear un contador para las categorías de partidos
+        categorias_partidos_cargo = Counter()
+        
         for partido, partido_stats in partidos_ordenados:
             total_candidatos_partidos += partido_stats['cantidad']
             html += f"""
@@ -604,6 +665,10 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 <td>{partido_stats['porcentaje']:.1f}%</td>
             </tr>
             """
+            
+            # Categorizar el partido y acumular en el contador
+            categoria = categorizar_partido(partido)
+            categorias_partidos_cargo[categoria] += partido_stats['cantidad']
         
         # Añadir fila de totales para la tabla de partidos
         html += f"""
@@ -613,7 +678,41 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 <td>100%</td>
             </tr>
         </table>
-            
+        
+        <h4>Agrupación por familias políticas</h4>
+        <table>
+            <tr>
+                <th>Familia Política</th>
+                <th>Candidatos</th>
+                <th>Porcentaje</th>
+            </tr>
+        """
+        
+        # Mostrar las categorías de partidos en orden específico
+        orden_categorias = ["Radicales", "Autonomistas", "Liberales", "Otros"]
+        total_categorias_cargo = sum(categorias_partidos_cargo.values())
+        
+        for categoria in orden_categorias:
+            cantidad = categorias_partidos_cargo.get(categoria, 0)
+            if cantidad > 0:
+                porcentaje = (cantidad / total_categorias_cargo) * 100 if total_categorias_cargo > 0 else 0
+                html += f"""
+                <tr>
+                    <td>{categoria}</td>
+                    <td>{cantidad}</td>
+                    <td>{porcentaje:.1f}%</td>
+                </tr>
+                """
+        
+        # Añadir fila de totales para la tabla de categorías
+        html += f"""
+            <tr style="font-weight: bold; background-color: #f2f2f2;">
+                <td>Total</td>
+                <td>{total_categorias_cargo}</td>
+                <td>100%</td>
+            </tr>
+        </table>
+        
         <h4>Distribución por Periodos Históricos</h4>
         <table>
             <tr>
@@ -675,12 +774,13 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 </tr>
                 """
         
-        # Añadir fila de totales para la tabla de cargos previos
+        # Añadir fila de totales al final de la tabla
         html += f"""
             <tr style="font-weight: bold; background-color: #f2f2f2;">
                 <td>Total</td>
                 <td>{total_candidatos_cargos}</td>
                 <td>100%</td>
+                <td></td>
             </tr>
         </table>
         </div>
@@ -1086,7 +1186,7 @@ def generar_tabla_candidatos(candidatos_data):
         primera_candidatura = ""
         experiencia_anos = ""
         cargos_previos = ""
-        candidaturas_previas = 0
+        candidaturas_previas = ""  # Inicializar como string vacío
         
         # Manejar valores nulos/vacíos
         partidos_previos = candidato.get('partidos_previos', '')
@@ -1098,6 +1198,7 @@ def generar_tabla_candidatos(candidatos_data):
             # Buscar el año de la primera candidatura y cargos previos
             primer_anno_peronista = candidato.get('primer_anno', 0)
             cargos_previos_lista = []
+            candidaturas_previas = 0  # Inicializar contador para candidatos con experiencia
             
             for registro in candidato.get('trayectoria', []):
                 anno = registro.get('Año', 0)

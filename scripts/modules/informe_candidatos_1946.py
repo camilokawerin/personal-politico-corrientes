@@ -8,8 +8,12 @@ import os
 import sys
 from datetime import datetime
 from collections import Counter, defaultdict
-# Add the parent directory to sys.path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Fix path to properly import modules regardless of how the script is run
+module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+project_root = os.path.dirname(module_path)
+sys.path.insert(0, project_root)
+
 from scripts.commons.db_utils import ejecutar_consulta
 from scripts.commons.data_retrieval import (
     obtener_candidatos_1946,
@@ -17,6 +21,18 @@ from scripts.commons.data_retrieval import (
     obtener_detalle_trayectoria_candidatos_peronistas
 )
 from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html
+
+def categorizar_partido(partido):
+    """Categoriza un partido según su familia política"""
+    partido_lower = partido.lower()
+    if 'radical' in partido_lower:
+        return 'Radicales'
+    elif 'autonomista' in partido_lower:
+        return 'Autonomistas'
+    elif 'liberal' in partido_lower:
+        return 'Liberales'
+    else:
+        return 'Otros'
 
 def generar_informe_html_candidatos_1946(candidatos_data):
     """Genera un informe HTML con los datos de los candidatos peronistas de 1946"""
@@ -28,8 +44,9 @@ def generar_informe_html_candidatos_1946(candidatos_data):
         <title>Candidatos Peronistas de 1946 - Trayectorias Previas</title>
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
-            h1, h2, h3, h4 { color: #333; }            h2 { margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-            h3 { margin-top: 25px; padding: 5px; }
+            h1, h2, h3, h4 { color: #333; }            
+            h2 { margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+            h3 { margin-top: 0; padding: 5px; }
             h4 { margin-top: 15px; border-left: 3px solid #4CAF50; padding-left: 10px; }
             table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
             th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -41,14 +58,19 @@ def generar_informe_html_candidatos_1946(candidatos_data):
             .candidato-electo { font-weight: bold; }
             .sin-experiencia { color: #999; font-style: italic; }
             .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-            .tipo-cargo-section { margin-top: 30px; border-top: 1px dashed #999; padding-top: 20px; }
-            @media (max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }            .stat-highlight { font-size: 1.2em; font-weight: bold; color: #0066cc; }
-            .section-title { padding: 10px; text-align: left; 
-                         border: none; margin-bottom: 0; margin-top: 0; }
-            .candidate-section { background-color: white; padding: 10px; border: 1px solid #ddd; margin-bottom: 20px; }        </style>
+            .tipo-cargo-section { padding-top: 15px; }
+            @media (max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
+            .stat-highlight { font-weight: bold; color: #0066cc; }
+            .section-title { padding: 10px; text-align: left; border: none; margin-bottom: 0; margin-top: 0; }
+            .candidate-section { background-color: white; padding: 10px; border: 1px solid #ddd; margin-bottom: 20px; }
+            .full-width-box { margin-bottom: 20px; padding: 20px; background-color: #f5f5f5; border-left: 4px solid #4CAF50; width: 100%; box-sizing: border-box; }
+        </style>
     </head><body>
         <h1>Candidatos de Partidos Peronistas en las Elecciones de 1946</h1>
         <p>Informe generado el: """ + datetime.now().strftime('%d/%m/%Y %H:%M:%S') + """</p>
+        <p>Este informe analiza la experiencia política previa de los candidatos que participaron en las elecciones de 1946
+        por los partidos Laborista Correntino y Radical (Junta Reorganizadora), permitiendo visualizar sus trayectorias
+        políticas y procedencia partidaria.</p>
     """
     
     # Analizamos los datos para el resumen
@@ -60,23 +82,26 @@ def generar_informe_html_candidatos_1946(candidatos_data):
     total_laboristas_electos = sum(1 for c in candidatos_laboristas if c['electo'] == 'Sí')
     total_radicales_jr_electos = sum(1 for c in candidatos_radicales_jr if c['electo'] == 'Sí')
     
-    candidatos_con_experiencia = [c for c in candidatos_data if c['tiene_experiencia_previa']]
+    # Corregir la identificación de candidatos con experiencia previa
+    # El error está en que estamos tratando 'tiene_experiencia_previa' como True para todos
+    candidatos_con_experiencia = [c for c in candidatos_data if c.get('tiene_experiencia_previa') == True]
     porcentaje_con_experiencia = (len(candidatos_con_experiencia) / total_candidatos) * 100 if total_candidatos > 0 else 0
     
     # Contamos los candidatos con experiencia previa por partido
-    laboristas_con_exp = [c for c in candidatos_laboristas if c['tiene_experiencia_previa']]
-    radicales_jr_con_exp = [c for c in candidatos_radicales_jr if c['tiene_experiencia_previa']]
+    laboristas_con_exp = [c for c in candidatos_laboristas if c.get('tiene_experiencia_previa') == True]
+    radicales_jr_con_exp = [c for c in candidatos_radicales_jr if c.get('tiene_experiencia_previa') == True]
     
     # Calculamos porcentajes
     porc_laboristas_con_exp = (len(laboristas_con_exp) / len(candidatos_laboristas)) * 100 if len(candidatos_laboristas) > 0 else 0
     porc_radicales_jr_con_exp = (len(radicales_jr_con_exp) / len(candidatos_radicales_jr)) * 100 if len(candidatos_radicales_jr) > 0 else 0
     
-    # Resumen general
+    # Resumen general - Usamos full-width-box como en el otro informe
     html += f"""
-        <div class="summary-box">
-            <h2>Resumen General</h2>
+        <div class="full-width-box">
+            <h3>Resumen General</h3>
             <p><strong>Total de candidatos analizados:</strong> {total_candidatos}</p>
             <p><strong>Candidatos con experiencia política previa:</strong> {len(candidatos_con_experiencia)} <span class="stat-highlight">({porcentaje_con_experiencia:.1f}%)</span></p>
+            <p><strong>Total electos:</strong> {total_electos} ({(total_electos/total_candidatos)*100:.1f}%)</p>
         </div>
 
         <h2>Estadísticas Comparativas por Partido (Todos los Candidatos)</h2>
@@ -111,7 +136,11 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     </tr>
     """
     
+    # Variable para calcular el total de candidatos mostrados en la tabla
+    total_candidatos_tabla_partidos_laboristas = 0
+    
     for partido, cantidad in contador_partidos_laboristas.most_common():
+        total_candidatos_tabla_partidos_laboristas += cantidad
         porcentaje = (cantidad / len(laboristas_con_exp)) * 100 if len(laboristas_con_exp) > 0 else 0
         html += f"""
                     <tr>
@@ -121,7 +150,57 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     </tr>
         """
     
+    # Añadir fila de totales al final de la tabla (consistente con el otro informe)
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_candidatos_tabla_partidos_laboristas}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+    """
+    
+    # NUEVA TABLA: Agrupación por familias políticas
+    # Crear un contador para las categorías
+    categorias_partidos_laboristas = Counter()
+    for partido, cantidad in contador_partidos_laboristas.items():
+        categoria = categorizar_partido(partido)
+        categorias_partidos_laboristas[categoria] += cantidad
+    
+    # Agregar tabla de categorías de partidos
     html += """
+                <h4>Agrupación por familias políticas</h4>
+                <table>
+                    <tr>
+                        <th>Familia Política</th>
+                        <th>Candidatos</th>
+                        <th>Porcentaje</th>
+                    </tr>
+    """
+    
+    # Mostrar las categorías en orden específico
+    orden_categorias = ["Radicales", "Autonomistas", "Liberales", "Otros"]
+    total_categorias = sum(categorias_partidos_laboristas.values())
+    
+    for categoria in orden_categorias:
+        cantidad = categorias_partidos_laboristas.get(categoria, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_categorias) * 100 if total_categorias > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{categoria}</td>
+                        <td>{cantidad}</td>
+                        <td>{porcentaje:.1f}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de categorías
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_categorias}</td>
+                        <td>100%</td>
+                    </tr>
                 </table>
             </div>
     """
@@ -154,7 +233,11 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     </tr>
     """
     
+    # Variable para calcular el total de candidatos mostrados en la tabla
+    total_candidatos_tabla_partidos_radicales = 0
+    
     for partido, cantidad in contador_partidos_radicales.most_common():
+        total_candidatos_tabla_partidos_radicales += cantidad
         porcentaje = (cantidad / len(radicales_jr_con_exp)) * 100 if len(radicales_jr_con_exp) > 0 else 0
         html += f"""
                     <tr>
@@ -164,34 +247,71 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     </tr>
         """
     
+    # Añadir fila de totales al final de la tabla (consistente con el otro informe)
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_candidatos_tabla_partidos_radicales}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+    """
+    
+    # NUEVA TABLA: Agrupación por familias políticas para radicales JR
+    # Crear un contador para las categorías
+    categorias_partidos_radicales = Counter()
+    for partido, cantidad in contador_partidos_radicales.items():
+        categoria = categorizar_partido(partido)
+        categorias_partidos_radicales[categoria] += cantidad
+    
+    # Agregar tabla de categorías de partidos
     html += """
+                <h4>Agrupación por familias políticas</h4>
+                <table>
+                    <tr>
+                        <th>Familia Política</th>
+                        <th>Candidatos</th>
+                        <th>Porcentaje</th>
+                    </tr>
+    """
+    
+    # Mostrar las categorías en orden específico
+    total_categorias_rad = sum(categorias_partidos_radicales.values())
+    
+    for categoria in orden_categorias:
+        cantidad = categorias_partidos_radicales.get(categoria, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_categorias_rad) * 100 if total_categorias_rad > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{categoria}</td>
+                        <td>{cantidad}</td>
+                        <td>{porcentaje:.1f}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de categorías
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_categorias_rad}</td>
+                        <td>100%</td>
+                    </tr>
                 </table>
             </div>
         </div>
     """
     
     # Agrupamos candidatos por tipo de cargo
-    diputados = [c for c in candidatos_data if c['cargo'] == 'Diputado' and c['ambito'] == 'Provincial']
-    senadores = [c for c in candidatos_data if c['cargo'] == 'Senador' and c['ambito'] == 'Provincial']
     diputados_nacionales = [c for c in candidatos_data if c['cargo'] == 'Diputado' and c['ambito'] == 'Nacional']
+    senadores = [c for c in candidatos_data if c['cargo'] == 'Senador' and c['ambito'] == 'Provincial']
+    diputados = [c for c in candidatos_data if c['cargo'] == 'Diputado' and c['ambito'] == 'Provincial']
     
-    # Sección de Diputados Provinciales
-    html += generar_seccion_cargo(
-        "Diputados Provinciales", 
-        diputados, 
-        [c for c in candidatos_laboristas if c['cargo'] == 'Diputado' and c['ambito'] == 'Provincial'],
-        [c for c in candidatos_radicales_jr if c['cargo'] == 'Diputado' and c['ambito'] == 'Provincial']
-    )
+    # Usar el mismo título de sección que en el otro informe
+    html += "<h2>Distribución por Tipo de Cargo</h2>"
     
-    # Sección de Senadores Provinciales
-    html += generar_seccion_cargo(
-        "Senadores Provinciales", 
-        senadores, 
-        [c for c in candidatos_laboristas if c['cargo'] == 'Senador' and c['ambito'] == 'Provincial'],
-        [c for c in candidatos_radicales_jr if c['cargo'] == 'Senador' and c['ambito'] == 'Provincial']
-    )
-    
-    # Sección de Diputados Nacionales
+    # Modificar el orden de las secciones para que coincida con el otro informe
+    # Sección de Diputados Nacionales (primero)
     if diputados_nacionales:
         html += generar_seccion_cargo(
             "Diputados Nacionales", 
@@ -200,11 +320,23 @@ def generar_informe_html_candidatos_1946(candidatos_data):
             [c for c in candidatos_radicales_jr if c['cargo'] == 'Diputado' and c['ambito'] == 'Nacional']
         )
     
-    # Cerrar las secciones de estadísticas comparativas
-    html += """
-    </div>
-    """
-      # Sección final: Listado de todos los candidatos
+    # Sección de Senadores Provinciales (segundo)
+    html += generar_seccion_cargo(
+        "Senadores Provinciales", 
+        senadores, 
+        [c for c in candidatos_laboristas if c['cargo'] == 'Senador' and c['ambito'] == 'Provincial'],
+        [c for c in candidatos_radicales_jr if c['cargo'] == 'Senador' and c['ambito'] == 'Provincial']
+    )
+    
+    # Sección de Diputados Provinciales (tercero)
+    html += generar_seccion_cargo(
+        "Diputados Provinciales", 
+        diputados, 
+        [c for c in candidatos_laboristas if c['cargo'] == 'Diputado' and c['ambito'] == 'Provincial'],
+        [c for c in candidatos_radicales_jr if c['cargo'] == 'Diputado' and c['ambito'] == 'Provincial']
+    )
+    
+    # Sección final: Listado de todos los candidatos
     html += """
         <h2>Listado Completo de Candidatos</h2>
         
@@ -237,56 +369,20 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
     if not candidatos:
         return ""
         
-    # Calculamos estadísticas generales para este tipo de cargo
+    # Mantener el cálculo de estadísticas para referencia interna
     total = len(candidatos)
-    con_experiencia = [c for c in candidatos if c['tiene_experiencia_previa']]
+    con_experiencia = [c for c in candidatos if c.get('tiene_experiencia_previa') == True]
     porcentaje_exp = (len(con_experiencia) / total) * 100 if total > 0 else 0
     
-    # Recopilamos partidos previos más comunes
-    partidos_previos = []
-    for candidato in con_experiencia:
-        if candidato.get('partidos_previos'):
-            partidos = candidato.get('partidos_previos').split(', ')
-            partidos_previos.extend(partidos)
-    
-    contador_partidos = Counter(partidos_previos)
-    
+    # Generar HTML empezando directamente con el título y el grid container
     html = f"""
         <div class="tipo-cargo-section">
-            <h2>Estadísticas Comparativas: {titulo}</h2>
-            <div class="summary-box">
-                <p><strong>Total candidatos:</strong> {total}</p>
-                <p><strong>Con experiencia previa:</strong> {len(con_experiencia)} <span class="stat-highlight">({porcentaje_exp:.1f}%)</span></p>
-                
-                <h4>Procedencia partidaria principal</h4>
-                <table>
-                    <tr>
-                        <th>Partido Previo</th>
-                        <th>Candidatos</th>
-                        <th>Porcentaje</th>
-                    </tr>
-    """
-    
-    # Generamos filas de la tabla de partidos previos
-    for partido, cantidad in contador_partidos.most_common():
-        porcentaje = (cantidad / len(con_experiencia)) * 100 if len(con_experiencia) > 0 else 0
-        html += f"""
-            <tr>
-                <td>{partido}</td>
-                <td>{cantidad}</td>
-                <td>{porcentaje:.1f}%</td>
-            </tr>
-        """
-    
-    html += """
-                </table>
-            </div>
-            
+            <h3>{titulo}</h3>
             <div class="grid-container">
     """
     
     # Sección para Laboristas de este tipo de cargo
-    laboristas_exp = [c for c in candidatos_laboristas_filtrados if c['tiene_experiencia_previa']]
+    laboristas_exp = [c for c in candidatos_laboristas_filtrados if c.get('tiene_experiencia_previa') == True]
     porcentaje_lab_exp = (len(laboristas_exp) / len(candidatos_laboristas_filtrados)) * 100 if len(candidatos_laboristas_filtrados) > 0 else 0
     
     html += f"""
@@ -323,13 +419,64 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                         </tr>
         """
     
+    # Añadir fila de totales al final de la tabla
+    total_candidatos_tabla_partidos_lab = sum(contador_partidos_lab.values())
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_candidatos_tabla_partidos_lab}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+    """
+    
+    # NUEVA TABLA: Agrupación por familias políticas para laboristas
+    # Crear un contador para las categorías
+    categorias_partidos_lab = Counter()
+    for partido, cantidad in contador_partidos_lab.items():
+        categoria = categorizar_partido(partido)
+        categorias_partidos_lab[categoria] += cantidad
+    
+    # Agregar tabla de categorías de partidos
     html += """
-                    </table>
+                <h4>Agrupación por familias políticas</h4>
+                <table>
+                    <tr>
+                        <th>Familia Política</th>
+                        <th>Candidatos</th>
+                        <th>Porcentaje</th>
+                    </tr>
+    """
+    
+    # Mostrar las categorías en orden específico
+    orden_categorias = ["Radicales", "Autonomistas", "Liberales", "Otros"]
+    total_categorias_lab = sum(categorias_partidos_lab.values())
+    
+    for categoria in orden_categorias:
+        cantidad = categorias_partidos_lab.get(categoria, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_categorias_lab) * 100 if total_categorias_lab > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{categoria}</td>
+                        <td>{cantidad}</td>
+                        <td>{porcentaje:.1f}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de categorías
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_categorias_lab}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
                 </div>
     """
     
     # Sección para Radicales JR de este tipo de cargo
-    radicales_exp = [c for c in candidatos_radicales_jr_filtrados if c['tiene_experiencia_previa']]
+    radicales_exp = [c for c in candidatos_radicales_jr_filtrados if c.get('tiene_experiencia_previa') == True]
     porcentaje_rad_exp = (len(radicales_exp) / len(candidatos_radicales_jr_filtrados)) * 100 if len(candidatos_radicales_jr_filtrados) > 0 else 0
     
     html += f"""
@@ -366,9 +513,58 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                         </tr>
         """
     
+    # Añadir fila de totales al final de la tabla
+    total_candidatos_tabla_partidos_rad = sum(contador_partidos_rad.values())
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_candidatos_tabla_partidos_rad}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+    """
+    
+    # NUEVA TABLA: Agrupación por familias políticas para radicales JR
+    # Crear un contador para las categorías
+    categorias_partidos_rad = Counter()
+    for partido, cantidad in contador_partidos_rad.items():
+        categoria = categorizar_partido(partido)
+        categorias_partidos_rad[categoria] += cantidad
+    
+    # Agregar tabla de categorías de partidos
     html += """
-                    </table>
-                </div>
+                <h4>Agrupación por familias políticas</h4>
+                <table>
+                    <tr>
+                        <th>Familia Política</th>
+                        <th>Candidatos</th>
+                        <th>Porcentaje</th>
+                    </tr>
+    """
+    
+    # Mostrar las categorías en orden específico
+    total_categorias_rad = sum(categorias_partidos_rad.values())
+    
+    for categoria in orden_categorias:
+        cantidad = categorias_partidos_rad.get(categoria, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_categorias_rad) * 100 if total_categorias_rad > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{categoria}</td>
+                        <td>{cantidad}</td>
+                        <td>{porcentaje:.1f}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de categorías
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_categorias_rad}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
             </div>
         </div>
     """
@@ -473,7 +669,8 @@ def generar_tabla_candidatos(candidatos):
             if primera_candidatura:
                 experiencia_anos = 1946 - int(primera_candidatura)
         else:
-            candidaturas_previas = 0
+            # No mostrar "0" cuando no hay candidaturas previas
+            candidaturas_previas = ""
         
         # Manejar valores nulos/vacíos
         partidos_previos = candidato.get('partidos_previos', '')
@@ -529,6 +726,7 @@ def generar_informe_candidatos_1946():
         electo = 'Sí' if candidato['Electo'] == 1 else 'No'
         
         # Verificamos si tiene experiencia política previa
+        # Inicializar a False explícitamente
         tiene_experiencia_previa = False
         partidos_previos = []
         cargos_previos = ""
@@ -536,16 +734,18 @@ def generar_informe_candidatos_1946():
         # Buscamos en el listado de candidatos con experiencia previa
         for exp in candidatos_con_experiencia:
             if exp['ID_Persona'] == id_persona:
-                tiene_experiencia_previa = True
-                partidos_previos = exp.get('Partidos_Previos', '')
-                if partidos_previos and partidos_previos != 'None':
-                    partidos_previos = partidos_previos.split(', ')
-                else:
-                    partidos_previos = []
-                
-                cargos_previos = exp.get('Cargos_Previos', '')
-                if cargos_previos == 'None':
-                    cargos_previos = ''
+                # Solo marcar como True si realmente hay candidaturas previas
+                if exp.get('Cantidad_Candidaturas_Previas', 0) > 0:
+                    tiene_experiencia_previa = True
+                    partidos_previos = exp.get('Partidos_Previos', '')
+                    if partidos_previos and partidos_previos != 'None':
+                        partidos_previos = partidos_previos.split(', ')
+                    else:
+                        partidos_previos = []
+                    
+                    cargos_previos = exp.get('Cargos_Previos', '')
+                    if cargos_previos == 'None':
+                        cargos_previos = ''
                 break
         
         candidato_info = {
