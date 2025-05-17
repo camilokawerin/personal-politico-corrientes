@@ -100,31 +100,45 @@ def generar_grafico_cargos_previos(datos_cargos, prefix=''):
     return output_path
 
 def analizar_periodos_temporales(detalle_trayectorias):
-    """Analiza los periodos temporales de las candidaturas previas"""
-    # Definir los periodos históricos
-    periodos = {
-        "1900-1915": 0,
-        "1916-1930": 0,
-        "1931-1942": 0,
-        "1943-1945": 0
-    }
-    
-    # Contar legisladores activos en cada periodo
-    for legislador in detalle_trayectorias:
-        primera_anno = legislador.get('Anno_Primera_Candidatura', 0)
-        ultima_anno = legislador.get('Anno_Ultima_Candidatura', 0)
+        """Analiza los periodos temporales de las candidaturas previas"""
+        # Definir los periodos históricos
+        periodos = {
+            "1900-1915": 0,
+            "1916-1930": 0,
+            "1931-1942": 0,
+            "1946-1955": 0  # Removed "1943-1945" period as there were no elections in Latin America during this time
+        }
         
-        if primera_anno <= 1915 or ultima_anno <= 1915:
-            periodos["1900-1915"] += 1
-        if (primera_anno >= 1916 and primera_anno <= 1930) or (ultima_anno >= 1916 and ultima_anno <= 1930):
-            periodos["1916-1930"] += 1
-        if (primera_anno >= 1931 and primera_anno <= 1942) or (ultima_anno >= 1931 and ultima_anno <= 1942):
-            periodos["1931-1942"] += 1
-        if (primera_anno >= 1943 and primera_anno <= 1945) or (ultima_anno >= 1943 and ultima_anno <= 1945):
-            periodos["1943-1945"] += 1
+        # Rastrear personas ya contadas en algún período
+        personas_contadas = set()
+        
+        # Contar personas únicas según su primera candidatura
+        for legislador in detalle_trayectorias:
+            id_persona = legislador.get('ID_Persona')
+            
+            # Si ya contamos a esta persona, continuamos
+            if id_persona in personas_contadas:
+                continue
+                
+            primera_anno = legislador.get('Anno_Primera_Candidatura', 0)
+            
+            # Solo considerar candidatos con experiencia política previa
+            if legislador.get('Cantidad_Candidaturas_Previas', 0) > 0:
+                if 1900 <= primera_anno <= 1915:
+                    periodos["1900-1915"] += 1
+                    personas_contadas.add(id_persona)
+                elif 1916 <= primera_anno <= 1930:
+                    periodos["1916-1930"] += 1
+                    personas_contadas.add(id_persona)
+                elif 1931 <= primera_anno <= 1942:
+                    periodos["1931-1942"] += 1
+                    personas_contadas.add(id_persona)
+                elif 1946 <= primera_anno <= 1955:
+                    periodos["1946-1955"] += 1
+                    personas_contadas.add(id_persona)
+        
+        return periodos
     
-    return periodos
-
 def agrupar_cargos_por_tipo(datos_cargos, detalle_trayectorias):
     """
     Agrupa los cargos por tipo (Legislativo, Ejecutivo, etc.) contando personas únicas
