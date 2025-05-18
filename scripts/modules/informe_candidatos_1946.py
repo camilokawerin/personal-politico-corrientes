@@ -20,7 +20,7 @@ from scripts.commons.data_retrieval import (
     obtener_trayectoria,
     obtener_detalle_trayectoria_candidatos_peronistas
 )
-from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html
+from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html, formato_decimal
 
 def categorizar_partido(partido):
     """Categoriza un partido según su familia política"""
@@ -100,8 +100,8 @@ def generar_informe_html_candidatos_1946(candidatos_data):
         <div class="full-width-box">
             <h3>Resumen General</h3>
             <p><strong>Total de candidatos analizados:</strong> {total_candidatos}</p>
-            <p><strong>Candidatos con experiencia política previa:</strong> {len(candidatos_con_experiencia)} <span class="stat-highlight">({porcentaje_con_experiencia:.1f}%)</span></p>
-            <p><strong>Total electos:</strong> {total_electos} ({(total_electos/total_candidatos)*100:.1f}%)</p>
+            <p><strong>Candidatos con experiencia política previa:</strong> {len(candidatos_con_experiencia)} <span class="stat-highlight">({formato_decimal(porcentaje_con_experiencia)}%)</span></p>
+            <p><strong>Total electos:</strong> {total_electos} ({formato_decimal((total_electos/total_candidatos)*100)}%)</p>
         </div>
 
         <h2>Análisis General (Todos los Candidatos)</h2>
@@ -140,11 +140,11 @@ def generar_informe_html_candidatos_1946(candidatos_data):
         total_candidatos_tabla_partidos_todos += cantidad
         porcentaje = (cantidad / len(candidatos_con_experiencia)) * 100 if len(candidatos_con_experiencia) > 0 else 0
         html += f"""
-                        <tr>
-                            <td>{partido}</td>
-                            <td>{cantidad}</td>
-                            <td>{porcentaje:.1f}%</td>
-                        </tr>
+                    <tr>
+                        <td>{partido}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
         """
     
     # Añadir fila de totales al final de la tabla
@@ -185,7 +185,7 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                         <tr>
                             <td>{categoria}</td>
                             <td>{cantidad}</td>
-                            <td>{porcentaje:.1f}%</td>
+                            <td>{formato_decimal(porcentaje)}%</td>
                         </tr>
             """
     
@@ -210,7 +210,7 @@ def generar_informe_html_candidatos_1946(candidatos_data):
             <div class="summary-box partido-laborista">
                 <h3>Laborista Correntino</h3>
                 <p><strong>Total candidatos:</strong> {len(candidatos_laboristas)}</p>
-                <p><strong>Con experiencia previa:</strong> {len(laboristas_con_exp)} <span class="stat-highlight">({porc_laboristas_con_exp:.1f}%)</span></p>
+                <p><strong>Con experiencia previa:</strong> {len(laboristas_con_exp)} <span class="stat-highlight">({formato_decimal(porc_laboristas_con_exp)}%)</span></p>
                 
                 <h4>Partidos previos más comunes</h4>
                 <table>
@@ -243,7 +243,7 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     <tr>
                         <td>{partido}</td>
                         <td>{cantidad}</td>
-                        <td>{porcentaje:.1f}%</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
                     </tr>
         """
     
@@ -287,7 +287,7 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     <tr>
                         <td>{categoria}</td>
                         <td>{cantidad}</td>
-                        <td>{porcentaje:.1f}%</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
                     </tr>
             """
     
@@ -307,7 +307,7 @@ def generar_informe_html_candidatos_1946(candidatos_data):
             <div class="summary-box partido-radical">
                 <h3>Radical (Junta Reorganizadora)</h3>
                 <p><strong>Total candidatos:</strong> {len(candidatos_radicales_jr)}</p>
-                <p><strong>Con experiencia previa:</strong> {len(radicales_jr_con_exp)} <span class="stat-highlight">({porc_radicales_jr_con_exp:.1f}%)</span></p>
+                <p><strong>Con experiencia previa:</strong> {len(radicales_jr_con_exp)} <span class="stat-highlight">({formato_decimal(porc_radicales_jr_con_exp)}%)</span></p>
                 
                 <h4>Partidos previos más comunes</h4>
                 <table>
@@ -340,7 +340,7 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     <tr>
                         <td>{partido}</td>
                         <td>{cantidad}</td>
-                        <td>{porcentaje:.1f}%</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
                     </tr>
         """
     
@@ -383,7 +383,7 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     <tr>
                         <td>{categoria}</td>
                         <td>{cantidad}</td>
-                        <td>{porcentaje:.1f}%</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
                     </tr>
             """
     
@@ -486,7 +486,7 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                 <div class="summary-box partido-laborista">
                     <h3>Laborista Correntino</h3>
                     <p><strong>Total candidatos:</strong> {len(candidatos_laboristas_filtrados)}</p>
-                    <p><strong>Con experiencia previa:</strong> {len(laboristas_exp)} <span class="stat-highlight">({porcentaje_lab_exp:.1f}%)</span></p>
+                    <p><strong>Con experiencia previa:</strong> {len(laboristas_exp)} <span class="stat-highlight">({formato_decimal(porcentaje_lab_exp)}%)</span></p>
                 
                     <h4>Partidos previos más comunes</h4>
                     <table>
@@ -516,7 +516,7 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                     <tr>
                         <td>{partido}</td>
                         <td>{cantidad}</td>
-                        <td>{porcentaje:.1f}%</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
                     </tr>
         """
     
@@ -561,7 +561,7 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                     <tr>
                         <td>{categoria}</td>
                         <td>{cantidad}</td>
-                        <td>{porcentaje:.1f}%</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
                     </tr>
             """
     
@@ -584,7 +584,7 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                 <div class="summary-box partido-radical">
                     <h3>Radical (Junta Reorganizadora)</h3>
                     <p><strong>Total candidatos:</strong> {len(candidatos_radicales_jr_filtrados)}</p>
-                    <p><strong>Con experiencia previa:</strong> {len(radicales_exp)} <span class="stat-highlight">({porcentaje_rad_exp:.1f}%)</span></p>
+                    <p><strong>Con experiencia previa:</strong> {len(radicales_exp)} <span class="stat-highlight">({formato_decimal(porcentaje_rad_exp)}%)</span></p>
                 
                     <h4>Partidos previos más comunes</h4>
                     <table>
@@ -609,20 +609,19 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
     contador_partidos_rad = Counter(partidos_previos_rad)
     
     # Variable para calcular el total de candidatos mostrados en la tabla de partidos de radicales JR
-    total_candidatos_tabla_partidos_rad = 0
+    total_candidatos_tabla_partidos_rad = sum(contador_partidos_rad.values())
     
     for partido, cantidad in contador_partidos_rad.most_common():
-        total_candidatos_tabla_partidos_rad += cantidad
         porcentaje = (cantidad / len(radicales_exp)) * 100 if len(radicales_exp) > 0 else 0
         html += f"""
                         <tr>
                             <td>{partido}</td>
                             <td>{cantidad}</td>
-                            <td>{porcentaje:.1f}%</td>
+                            <td>{formato_decimal(porcentaje)}%</td>
                         </tr>
         """
     
-    # Añadir fila de totales al final de la tabla (consistente con el otro informe)
+    # Añadir fila de totales al final de la tabla
     html += f"""
                     <tr style="font-weight: bold; background-color: #f2f2f2;">
                         <td>Total</td>
@@ -661,7 +660,7 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                     <tr>
                         <td>{categoria}</td>
                         <td>{cantidad}</td>
-                        <td>{porcentaje:.1f}%</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
                     </tr>
             """
     

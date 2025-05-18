@@ -5,14 +5,18 @@ de todos los legisladores peronistas electos entre 1946 y 1955.
 """
 import os
 import sys
-# Add the parent directory to sys.path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Fix path to properly import modules regardless of how the script is run
+module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+project_root = os.path.dirname(module_path)
+sys.path.insert(0, project_root)
+
 from scripts.commons.db_utils import ejecutar_consulta
 from scripts.commons.data_retrieval import (
     obtener_legisladores_peronistas,
     obtener_trayectoria
 )
-from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html
+from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html, formato_decimal
 
 def generar_informe_html_legisladores_peronistas(legisladores_data):
     """Genera un informe HTML con las trayectorias completas de los legisladores peronistas"""

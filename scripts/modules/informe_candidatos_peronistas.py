@@ -24,7 +24,7 @@ from scripts.commons.visualization import (
     generar_grafico_periodos_temporales,
     analizar_periodos_temporales
 )
-from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html
+from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html, formato_decimal
 
 def categorizar_partido(partido):
     """Categoriza un partido según su familia política"""
@@ -88,6 +88,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 personas_contadas["1946-1955"].add(id_persona)
     
     # Generar el contenido HTML
+    # Modificar los estilos en el encabezado HTML para controlar el ancho de columnas
     html = """<!DOCTYPE html>
     <html lang="es">
     <head>
@@ -104,6 +105,13 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
             th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
             th { background-color: #f2f2f2; }
             tr:nth-child(even) { background-color: #f9f9f9; }
+            
+            /* Estilos para controlar el ancho de columnas */
+            .col-nombre { width: 50%; }
+            .col-cantidad { width: 15%; }
+            .col-porcentaje { width: 15%; }
+            .col-año { width: 10%; }
+            
             .summary-box { margin-bottom: 20px; padding: 15px; background-color: #f5f5f5; border-left: 4px solid #4CAF50; }
             .chart-container { margin: 20px 0; text-align: center; }
             .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -129,13 +137,17 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         <p>Este informe analiza la experiencia política previa de todos los candidatos peronistas 
         que participaron en elecciones entre 1946 y 1955, permitiendo visualizar sus trayectorias
         políticas y patrones de experiencia previa.</p>
+    """
         
+    # Correctly format the resumen general section as an f-string outside of the main HTML string
+    html += f"""
+        <!-- Resumen general -->
         <div class="full-width-box">
             <h3>Resumen General</h3>
-            <p><strong>Total de candidatos peronistas:</strong> """ + str(total_candidatos) + """</p>
-            <p><strong>Candidatos con experiencia política previa:</strong> """ + str(total_con_experiencia) + """ (""" + f"{porcentaje_con_experiencia:.1f}%" + """)</p>
-            <p><strong>Promedio de candidaturas previas:</strong> """ + f"{promedio_candidaturas:.2f}" + """</p>
-            <p><strong>Antigüedad política promedio:</strong> """ + f"{antiguedad_promedio:.1f} años" + """</p>
+            <p><strong>Total de candidatos peronistas:</strong> {total_candidatos}</p>
+            <p><strong>Candidatos con experiencia política previa:</strong> {total_con_experiencia} ({formato_decimal(porcentaje_con_experiencia)}%)</p>
+            <p><strong>Promedio de candidaturas previas:</strong> {formato_decimal(promedio_candidaturas, 2)}</p>
+            <p><strong>Antigüedad política promedio:</strong> {formato_decimal(antiguedad_promedio)} años</p>
         </div>
     """
     
@@ -162,18 +174,18 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         
     html += "</div>"
     
-    # Agregar tabla con detalle de estadísticas por partido
+    # Actualizar las tablas para usar las clases de ancho de columna
     if datos_partidos_previos:
         html += f"""
         <h2>Distribución por Partido Previo</h2>
         <p>Distribución de candidatos peronistas según el partido político al que pertenecieron previamente.</p>
         <table>
             <tr>
-                <th>Partido Previo</th>
-                <th>Cantidad de Candidatos</th>
-                <th>Porcentaje</th>
-                <th>Año Más Antiguo</th>
-                <th>Año Más Reciente</th>
+                <th class="col-nombre">Partido Previo</th>
+                <th class="col-cantidad">Cantidad de Candidatos</th>
+                <th class="col-porcentaje">Porcentaje</th>
+                <th class="col-año">Año Más Antiguo</th>
+                <th class="col-año">Año Más Reciente</th>
             </tr>
         """
         
@@ -187,7 +199,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
             <tr>
                 <td>{partido['Partido_Previo']}</td>
                 <td>{partido['Cantidad_Candidatos']}</td>
-                <td>{porcentaje:.2f}%</td>
+                <td>{formato_decimal(porcentaje, 2)}%</td>
                 <td>{partido['Anno_Min']}</td>
                 <td>{partido['Anno_Max']}</td>
             </tr>
@@ -205,22 +217,22 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         </table>
         """
         
-        # NUEVA TABLA: Agrupación por familias políticas
+        # NUEVA TABLA: Agrupación por familias políticas - Now placing it right after the Partido Previo table
         # Agrupar los partidos por categoría
         categorias_partidos = Counter()
         for partido in datos_partidos_previos:
             categoria = categorizar_partido(partido['Partido_Previo'])
             categorias_partidos[categoria] += partido['Cantidad_Candidatos']
         
-        # Agregar tabla de categorías de partidos
+        # Actualizar la tabla de categorías de partidos
         html += """
         <h3>Agrupación por familias políticas</h3>
         <p>Distribución de candidatos peronistas según la familia política a la que pertenecieron previamente.</p>
         <table>
             <tr>
-                <th>Familia Política</th>
-                <th>Cantidad de Candidatos</th>
-                <th>Porcentaje</th>
+                <th class="col-nombre">Familia Política</th>
+                <th class="col-cantidad">Cantidad de Candidatos</th>
+                <th class="col-porcentaje">Porcentaje</th>
             </tr>
         """
         
@@ -236,11 +248,11 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 <tr>
                     <td>{categoria}</td>
                     <td>{cantidad}</td>
-                    <td>{porcentaje:.2f}%</td>
+                    <td>{formato_decimal(porcentaje)}%</td>
                 </tr>
                 """
         
-        # Añadir fila de totales para la tabla de categorías
+        # Añadir fila de totales al final de la tabla
         html += f"""
             <tr style="font-weight: bold; background-color: #f2f2f2;">
                 <td>Total</td>
@@ -250,6 +262,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         </table>
         """
     
+    # Fix organization of the Periodos Históricos section - Make sure it is separated and properly organized
     # Análisis de experiencia previa por periodo histórico
     periodos_detalle = {
         "1900-1915": {"candidatos": [], "partidos": Counter(), "personas": set()},
@@ -302,9 +315,9 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
     <p>Distribución de candidatos peronistas según el periodo en que tuvieron su primera participación política previa.</p>
     <table>
         <tr>
-            <th>Periodo Histórico</th>
-            <th>Cantidad de Candidatos</th>
-            <th>Porcentaje</th>
+            <th class="col-nombre">Periodo Histórico</th>
+            <th class="col-cantidad">Cantidad de Candidatos</th>
+            <th class="col-porcentaje">Porcentaje</th>
             <th>Partidos Principales</th>
         </tr>
     """
@@ -336,7 +349,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         <tr>
             <td><strong>{periodo}</strong></td>
             <td>{total_periodo}</td>
-            <td>{porcentaje:.1f}%</td>
+            <td>{formato_decimal(porcentaje)}%</td>
             <td>{partidos_texto}</td>
         </tr>
     """
@@ -429,9 +442,9 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
     <p>Distribución de candidatos peronistas según el cargo de mayor jerarquía que ocuparon previamente.</p>
     <table>
         <tr>
-            <th>Cargo Previo</th>
-            <th>Cantidad de Candidatos</th>
-            <th>Porcentaje</th>
+            <th class="col-nombre">Cargo Previo</th>
+            <th class="col-cantidad">Cantidad de Candidatos</th>
+            <th class="col-porcentaje">Porcentaje</th>
             <th>Partidos Principales</th>
         </tr>
     """
@@ -477,7 +490,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         <tr>
             <td><strong>{cargo}</strong></td>
             <td>{total_cargo}</td>
-            <td>{porcentaje:.1f}%</td>
+            <td>{formato_decimal(porcentaje)}%</td>
             <td>{partidos_texto}</td>
         </tr>
     """
@@ -636,14 +649,14 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         <div class="summary-box tipo-cargo-section">
             <h3>{tipo_cargo}</h3>
             <p><strong>Total candidatos:</strong> {stats['total_candidatos']}</p>
-            <p><strong>Con experiencia previa:</strong> {stats['con_experiencia_previa']} <span class="stat-highlight">({stats['porcentaje_con_experiencia']:.1f}%)</span></p>
+            <p><strong>Con experiencia previa:</strong> {stats['con_experiencia_previa']} <span class="stat-highlight">({formato_decimal(stats['porcentaje_con_experiencia'])}%)</span></p>
             
             <h4>Procedencia Partidaria Principal</h4>
             <table>
                 <tr>
-                    <th>Partido Previo</th>
-                    <th>Candidatos</th>
-                    <th>Porcentaje</th>
+                    <th class="col-nombre">Partido Previo</th>
+                    <th class="col-cantidad">Candidatos</th>
+                    <th class="col-porcentaje">Porcentaje</th>
                 </tr>
         """
         
@@ -662,7 +675,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
             <tr>
                 <td>{partido}</td>
                 <td>{partido_stats['cantidad']}</td>
-                <td>{partido_stats['porcentaje']:.1f}%</td>
+                <td>{formato_decimal(partido_stats['porcentaje'])}%</td>
             </tr>
             """
             
@@ -682,9 +695,9 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         <h4>Agrupación por familias políticas</h4>
         <table>
             <tr>
-                <th>Familia Política</th>
-                <th>Candidatos</th>
-                <th>Porcentaje</th>
+                <th class="col-nombre">Familia Política</th>
+                <th class="col-cantidad">Candidatos</th>
+                <th class="col-porcentaje">Porcentaje</th>
             </tr>
         """
         
@@ -700,7 +713,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 <tr>
                     <td>{categoria}</td>
                     <td>{cantidad}</td>
-                    <td>{porcentaje:.1f}%</td>
+                    <td>{formato_decimal(porcentaje)}%</td>
                 </tr>
                 """
         
@@ -708,7 +721,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         html += f"""
             <tr style="font-weight: bold; background-color: #f2f2f2;">
                 <td>Total</td>
-                <td>{total_categorias_cargo}</td>
+                <td>{total_categorias}</td>
                 <td>100%</td>
             </tr>
         </table>
@@ -716,9 +729,9 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         <h4>Distribución por Periodos Históricos</h4>
         <table>
             <tr>
-                <th>Periodo</th>
-                <th>Candidatos</th>
-                <th>Porcentaje</th>
+                <th class="col-nombre">Periodo</th>
+                <th class="col-cantidad">Candidatos</th>
+                <th class="col-porcentaje">Porcentaje</th>
             </tr>
         """
         
@@ -735,7 +748,7 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 <tr>
                     <td>{periodo}</td>
                     <td>{cantidad}</td>
-                    <td>{porcentaje:.1f}%</td>
+                    <td>{formato_decimal(porcentaje)}%</td>
                 </tr>
                 """
         
@@ -751,9 +764,9 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
         <h4>Distribución por Tipo de Cargo Previo</h4>
         <table>
             <tr>
-                <th>Cargo Previo</th>
-                <th>Candidatos</th>
-                <th>Porcentaje</th>
+                <th class="col-nombre">Cargo Previo</th>
+                <th class="col-cantidad">Cantidad de Candidatos</th>
+                <th class="col-porcentaje">Porcentaje</th>
             </tr>
         """
         
@@ -770,23 +783,25 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
                 <tr>
                     <td>{cargo}</td>
                     <td>{cantidad}</td>
-                    <td>{porcentaje:.1f}%</td>
+                    <td>{formato_decimal(porcentaje)}%</td>
                 </tr>
                 """
         
-        # Añadir fila de totales al final de la tabla
+        # Fix: Proper closing of table with correct indentation and clear tag separation
         html += f"""
             <tr style="font-weight: bold; background-color: #f2f2f2;">
                 <td>Total</td>
                 <td>{total_candidatos_cargos}</td>
                 <td>100%</td>
-                <td></td>
             </tr>
         </table>
         </div>
         """
     
-    html += "</div>"  # Cierra grid-container para análisis por tipo de cargo
+    # Close the grid-container div
+    html += """
+    </div>  <!-- Cierre correcto del grid-container para análisis por tipo de cargo -->
+    """
     
     # Definición unificada de la función para asignar tipos de cargo
     def asignar_tipo_cargo(candidato_info):
@@ -1037,7 +1052,7 @@ def calcular_estadisticas_partido_previo_por_tipo_cargo(grupos_cargo, detalle_tr
             for partido, cantidad in partidos_previos.items():
                 estadisticas_por_cargo[tipo_cargo]['partidos_previos'][partido] = {
                     'cantidad': cantidad,
-                    'porcentaje': (cantidad / total_con_experiencia * 100) if total_con_experiencia > 0 else 0
+                    'porcentaje': formato_decimal((cantidad / total_con_experiencia * 100) if total_con_experiencia > 0 else 0)
                 }
     
     return estadisticas_por_cargo

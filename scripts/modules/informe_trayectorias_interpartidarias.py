@@ -8,9 +8,12 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
-import shutil
-# Add the parent directory to sys.path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Fix path to properly import modules regardless of how the script is run
+module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+project_root = os.path.dirname(module_path)
+sys.path.insert(0, project_root)
+
 from scripts.commons.db_utils import ejecutar_consulta
 from scripts.commons.data_retrieval import (
     obtener_estadisticas_trayectoria_interpartidaria,
@@ -22,10 +25,9 @@ from scripts.commons.visualization import (
     generar_grafico_partidos_previos,
     generar_grafico_periodos_temporales,
     generar_grafico_cargos_previos,
-    analizar_periodos_temporales,
-    agrupar_cargos_por_tipo
+    analizar_periodos_temporales
 )
-from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html
+from scripts.commons.html_utils import generar_encabezado_html, generar_pie_html, formato_decimal
 
 def generar_informe_html(datos_trayectoria_interpartidaria, detalle_trayectorias, datos_cargos=None, ruta_grafico=None, ruta_grafico_periodos=None, ruta_grafico_cargos=None):
     """Genera un informe HTML con estadísticas de trayectorias interpartidarias"""
@@ -45,8 +47,6 @@ def generar_informe_html(datos_trayectoria_interpartidaria, detalle_trayectorias
 
     # Analizar periodos históricos
     periodos = analizar_periodos_temporales(detalle_trayectorias) if detalle_trayectorias else {}
-      # Analizar tipos de cargos
-    tipos_cargos = agrupar_cargos_por_tipo(datos_cargos, detalle_trayectorias) if datos_cargos and detalle_trayectorias else {}
     
     # Generar el contenido HTML
     html = f"""<!DOCTYPE html>
@@ -77,12 +77,13 @@ def generar_informe_html(datos_trayectoria_interpartidaria, detalle_trayectorias
         <h1>Estadísticas de Legisladores Peronistas con Trayectoria Política Previa</h1>
         <p>Informe generado el: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}</p>
         
+        <!-- Resumen general -->
         <div class="grid-container">
             <div class="summary-box">
                 <h3>Resumen General</h3>
                 <p><strong>Total de legisladores con experiencia previa:</strong> {total_legisladores}</p>
-                <p><strong>Promedio de candidaturas previas por legislador:</strong> {promedio_candidaturas:.2f}</p>
-                <p><strong>Antigüedad política promedio antes del peronismo:</strong> {antiguedad_promedio:.1f} años</p>
+                <p><strong>Promedio de candidaturas previas por legislador:</strong> {formato_decimal(promedio_candidaturas, 2)}</p>
+                <p><strong>Antigüedad política promedio antes del peronismo:</strong> {formato_decimal(antiguedad_promedio)} años</p>
             </div>
             
             <div class="summary-box">
@@ -91,25 +92,6 @@ def generar_informe_html(datos_trayectoria_interpartidaria, detalle_trayectorias
                 <p><strong>1916-1930:</strong> {periodos.get("1916-1930", 0)} legisladores</p>
                 <p><strong>1931-1942:</strong> {periodos.get("1931-1942", 0)} legisladores</p>
                 <p><strong>1943-1945:</strong> {periodos.get("1943-1945", 0)} legisladores</p>
-            </div>
-        </div>
-    
-        <div class="summary-box">
-            <h3>Distribución por Tipo de Cargo</h3>
-            <div class="grid-container">
-    """
-    
-    # Agregar tipos de cargos
-    for tipo, cantidad in tipos_cargos.items():
-        if cantidad > 0:
-            porcentaje = (cantidad / total_legisladores) * 100 if total_legisladores > 0 else 0
-            html += f"""
-                <div>
-                    <p><strong>{tipo}:</strong> {cantidad} legisladores ({porcentaje:.1f}%)</p>
-                </div>
-            """
-    
-    html += """
             </div>
         </div>
     """
@@ -165,14 +147,14 @@ def generar_informe_html(datos_trayectoria_interpartidaria, detalle_trayectorias
         for partido in datos_trayectoria_interpartidaria:
             porcentaje = (partido['Cantidad_Legisladores'] / total_legisladores) * 100 if total_legisladores > 0 else 0
             html += f"""
-            <tr>
-                <td>{partido['Partido_Previo']}</td>
-                <td>{partido['Cantidad_Legisladores']}</td>
-                <td>{porcentaje:.2f}%</td>
-                <td>{partido['Anno_Min']}</td>
-                <td>{partido['Anno_Max']}</td>
-            </tr>
-            """
+        <tr>
+            <td>{partido['Partido_Previo']}</td>
+            <td>{partido['Cantidad_Legisladores']}</td>
+            <td>{formato_decimal(porcentaje, 2)}%</td>
+            <td>{partido['Anno_Min']}</td>
+            <td>{partido['Anno_Max']}</td>
+        </tr>
+        """
         
         html += """
         </table>
@@ -282,9 +264,10 @@ def generar_informe_trayectorias_interpartidarias():
     if not detalle_trayectorias:
         print("No se encontraron datos para el análisis de trayectorias interpartidarias.")
         return False
-      # Generar gráficos para el informe
+    
+    # Generar gráficos para el informe
     print("2. Generando gráficos para el informe...")
-      # Asegurarse de que los gráficos se guarden directamente en la carpeta correcta
+    # Asegurarse de que los gráficos se guarden directamente en la carpeta correcta
     output_dir = r"c:\Users\camil\Code\personal-politico-corrientes\informes"
     os.makedirs(output_dir, exist_ok=True)
     
@@ -310,7 +293,8 @@ def generar_informe_trayectorias_interpartidarias():
     plt.close()
     
     print(f"✓ Gráfico guardado en: {ruta_grafico}")
-      # Analizar periodos temporales
+    
+    # Analizar periodos temporales
     periodos = analizar_periodos_temporales(detalle_trayectorias)
     
     # Generar gráfico de periodos directamente en la carpeta final
@@ -353,7 +337,8 @@ def generar_informe_trayectorias_interpartidarias():
         ruta_grafico_periodos,
         ruta_grafico_cargos
     )
-      # Guardar informe HTML
+    
+    # Guardar informe HTML
     print("4. Guardando informe...")
     output_path = r"c:\Users\camil\Code\personal-politico-corrientes\informes\estadisticas_trayectorias_interpartidarias.html"
     
