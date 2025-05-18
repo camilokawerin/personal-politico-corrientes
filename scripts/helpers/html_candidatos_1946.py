@@ -9,7 +9,12 @@ from collections import Counter
 
 from scripts.commons.html_utils import formato_decimal
 from scripts.helpers.utilidades_candidatos_1946 import categorizar_partido
-from scripts.helpers.analisis_candidatos_1946 import analizar_partidos_previos, analizar_categorias_partidos
+from scripts.helpers.analisis_candidatos_1946 import (
+    analizar_partidos_previos, 
+    analizar_categorias_partidos,
+    analizar_periodos_historicos,
+    analizar_cargos_previos
+)
 from scripts.helpers.tablas_candidatos_1946 import generar_tabla_candidatos
 
 def generar_informe_html_candidatos_1946(candidatos_data):
@@ -53,6 +58,10 @@ def generar_informe_html_candidatos_1946(candidatos_data):
             .section-title { padding: 10px; text-align: left; border: none; margin-bottom: 0; margin-top: 0; }
             .candidate-section { background-color: white; padding: 10px; border: 1px solid #ddd; margin-bottom: 20px; }
             .full-width-box { margin-bottom: 20px; padding: 20px; background-color: #f5f5f5; border-left: 4px solid #4CAF50; width: 100%; box-sizing: border-box; }
+            .col-nombre { width: 50%; }
+            .col-cantidad { width: 15%; }
+            .col-porcentaje { width: 15%; }
+            .col-año { width: 10%; }
         </style>
     </head><body>
         <h1>Candidatos de Partidos Peronistas en las Elecciones de 1946</h1>
@@ -175,6 +184,88 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                     </table>
                 </div>
             </div>
+            
+            <!-- NUEVAS TABLAS: Distribución por períodos históricos y tipos de cargo previo -->
+            <div class="grid-container">
+                <div class="summary-box">
+                    <h4>Distribución por Períodos Históricos</h4>
+                    <table>
+                        <tr>
+                            <th class="col-nombre">Periodo Histórico</th>
+                            <th class="col-cantidad">Candidatos</th>
+                            <th class="col-porcentaje">Porcentaje</th>
+                        </tr>
+    """
+    
+    # Analizar los períodos históricos
+    periodos = analizar_periodos_historicos(candidatos_con_experiencia)
+    
+    # Orden cronológico para los periodos
+    periodos_orden = ["1900-1915", "1916-1930", "1931-1942", "1943-1945"]
+    total_periodos = sum(periodos.values())
+    
+    for periodo in periodos_orden:
+        cantidad = periodos.get(periodo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_periodos) * 100 if total_periodos > 0 else 0
+            html += f"""
+                        <tr>
+                            <td>{periodo}</td>
+                            <td>{cantidad}</td>
+                            <td>{formato_decimal(porcentaje)}%</td>
+                        </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de períodos
+    html += f"""
+                        <tr style="font-weight: bold; background-color: #f2f2f2;">
+                            <td>Total</td>
+                            <td>{total_periodos}</td>
+                            <td>100%</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>Distribución por Tipo de Cargo Previo</h4>
+                    <table>
+                        <tr>
+                            <th class="col-nombre">Cargo Previo</th>
+                            <th class="col-cantidad">Candidatos</th>
+                            <th class="col-porcentaje">Porcentaje</th>
+                        </tr>
+    """
+    
+    # Analizar los tipos de cargo previo
+    cargos_previos = analizar_cargos_previos(candidatos_con_experiencia)
+    
+    # Orden jerárquico para los cargos
+    cargos_orden = ["Diputado Nacional", "Senador Provincial", "Diputado Provincial", 
+                    "Elector Nacional", "Elector Provincial", "Otros Cargos"]
+    total_cargos = sum(cargos_previos.values())
+    
+    for cargo in cargos_orden:
+        cantidad = cargos_previos.get(cargo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_cargos) * 100 if total_cargos > 0 else 0
+            html += f"""
+                        <tr>
+                            <td>{cargo}</td>
+                            <td>{cantidad}</td>
+                            <td>{formato_decimal(porcentaje)}%</td>
+                        </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de cargos
+    html += f"""
+                        <tr style="font-weight: bold; background-color: #f2f2f2;">
+                            <td>Total</td>
+                            <td>{total_cargos}</td>
+                            <td>100%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <h2>Estadísticas Comparativas por Partido (Todos los Candidatos)</h2>
@@ -262,6 +353,75 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                         <td>100%</td>
                     </tr>
                 </table>
+                
+                <!-- NUEVAS TABLAS: Distribución por períodos históricos y tipos de cargo previo para Laboristas -->
+                <h4>Distribución por Períodos Históricos</h4>
+                <table>
+                    <tr>
+                        <th class="col-nombre">Periodo Histórico</th>
+                        <th class="col-cantidad">Candidatos</th>
+                        <th class="col-porcentaje">Porcentaje</th>
+                    </tr>
+    """
+    
+    # Analizar los períodos históricos para laboristas
+    periodos_lab = analizar_periodos_historicos(laboristas_con_exp)
+    total_periodos_lab = sum(periodos_lab.values())
+    
+    for periodo in periodos_orden:
+        cantidad = periodos_lab.get(periodo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_periodos_lab) * 100 if total_periodos_lab > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{periodo}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de períodos
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_periodos_lab}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+                
+                <h4>Distribución por Tipo de Cargo Previo</h4>
+                <table>
+                    <tr>
+                        <th class="col-nombre">Cargo Previo</th>
+                        <th class="col-cantidad">Candidatos</th>
+                        <th class="col-porcentaje">Porcentaje</th>
+                    </tr>
+    """
+    
+    # Analizar los tipos de cargo previo para laboristas
+    cargos_previos_lab = analizar_cargos_previos(laboristas_con_exp)
+    total_cargos_lab = sum(cargos_previos_lab.values())
+    
+    for cargo in cargos_orden:
+        cantidad = cargos_previos_lab.get(cargo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_cargos_lab) * 100 if total_cargos_lab > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{cargo}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de cargos
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_cargos_lab}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
             </div>
     """
     
@@ -345,6 +505,75 @@ def generar_informe_html_candidatos_1946(candidatos_data):
                         <td>100%</td>
                     </tr>
                 </table>
+                
+                <!-- NUEVAS TABLAS: Distribución por períodos históricos y tipos de cargo previo para Radical JR -->
+                <h4>Distribución por Períodos Históricos</h4>
+                <table>
+                    <tr>
+                        <th class="col-nombre">Periodo Histórico</th>
+                        <th class="col-cantidad">Candidatos</th>
+                        <th class="col-porcentaje">Porcentaje</th>
+                    </tr>
+    """
+    
+    # Analizar los períodos históricos para radicales
+    periodos_rad = analizar_periodos_historicos(radicales_jr_con_exp)
+    total_periodos_rad = sum(periodos_rad.values())
+    
+    for periodo in periodos_orden:
+        cantidad = periodos_rad.get(periodo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_periodos_rad) * 100 if total_periodos_rad > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{periodo}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de períodos
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_periodos_rad}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+                
+                <h4>Distribución por Tipo de Cargo Previo</h4>
+                <table>
+                    <tr>
+                        <th class="col-nombre">Cargo Previo</th>
+                        <th class="col-cantidad">Candidatos</th>
+                        <th class="col-porcentaje">Porcentaje</th>
+                    </tr>
+    """
+    
+    # Analizar los tipos de cargo previo para radicales
+    cargos_previos_rad = analizar_cargos_previos(radicales_jr_con_exp)
+    total_cargos_rad = sum(cargos_previos_rad.values())
+    
+    for cargo in cargos_orden:
+        cantidad = cargos_previos_rad.get(cargo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_cargos_rad) * 100 if total_cargos_rad > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{cargo}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de cargos
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_cargos_rad}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
             </div>
         </div>
     """
@@ -424,6 +653,14 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
     Returns:
         str: HTML de la sección para este tipo de cargo
     """
+    # Importaciones necesarias para realizar análisis dentro de la función
+    from scripts.helpers.analisis_candidatos_1946 import (
+        analizar_partidos_previos, 
+        analizar_categorias_partidos,
+        analizar_periodos_historicos,
+        analizar_cargos_previos
+    )
+    
     if not candidatos:
         return ""
         
@@ -431,6 +668,12 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
     total = len(candidatos)
     con_experiencia = [c for c in candidatos if c.get('tiene_experiencia_previa') == True]
     porcentaje_exp = (len(con_experiencia) / total) * 100 if total > 0 else 0
+    
+    # Orden definido para las categorías y periodos
+    orden_categorias = ["Radicales", "Autonomistas", "Liberales", "Otros"]
+    periodos_orden = ["1900-1915", "1916-1930", "1931-1942", "1943-1945"]
+    cargos_orden = ["Diputado Nacional", "Senador Provincial", "Diputado Provincial", 
+                    "Elector Nacional", "Elector Provincial", "Otros Cargos"]
     
     # Generar HTML empezando directamente con el título y el grid container
     html = f"""
@@ -498,7 +741,6 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
     """
     
     # Mostrar las categorías en orden específico
-    orden_categorias = ["Radicales", "Autonomistas", "Liberales", "Otros"]
     total_categorias_lab = sum(categorias_partidos_lab.values())
     
     for categoria in orden_categorias:
@@ -518,6 +760,75 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                     <tr style="font-weight: bold; background-color: #f2f2f2;">
                         <td>Total</td>
                         <td>{total_categorias_lab}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+                
+                <!-- NUEVAS TABLAS: Distribución por períodos históricos y tipos de cargo previo -->
+                <h4>Distribución por Períodos Históricos</h4>
+                <table>
+                    <tr>
+                        <th class="col-nombre">Periodo Histórico</th>
+                        <th class="col-cantidad">Candidatos</th>
+                        <th class="col-porcentaje">Porcentaje</th>
+                    </tr>
+    """
+    
+    # Analizar los períodos históricos para laboristas
+    periodos_lab = analizar_periodos_historicos(laboristas_exp)
+    total_periodos_lab = sum(periodos_lab.values())
+    
+    for periodo in periodos_orden:
+        cantidad = periodos_lab.get(periodo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_periodos_lab) * 100 if total_periodos_lab > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{periodo}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de períodos
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_periodos_lab}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+                
+                <h4>Distribución por Tipo de Cargo Previo</h4>
+                <table>
+                    <tr>
+                        <th class="col-nombre">Cargo Previo</th>
+                        <th class="col-cantidad">Candidatos</th>
+                        <th class="col-porcentaje">Porcentaje</th>
+                    </tr>
+    """
+    
+    # Analizar los tipos de cargo previo para laboristas
+    cargos_previos_lab = analizar_cargos_previos(laboristas_exp)
+    total_cargos_lab = sum(cargos_previos_lab.values())
+    
+    for cargo in cargos_orden:
+        cantidad = cargos_previos_lab.get(cargo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_cargos_lab) * 100 if total_cargos_lab > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{cargo}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de cargos
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_cargos_lab}</td>
                         <td>100%</td>
                     </tr>
                 </table>
@@ -604,6 +915,75 @@ def generar_seccion_cargo(titulo, candidatos, candidatos_laboristas_filtrados, c
                     <tr style="font-weight: bold; background-color: #f2f2f2;">
                         <td>Total</td>
                         <td>{total_categorias_rad}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+                
+                <!-- NUEVAS TABLAS: Distribución por períodos históricos y tipos de cargo previo -->
+                <h4>Distribución por Períodos Históricos</h4>
+                <table>
+                    <tr>
+                        <th class="col-nombre">Periodo Histórico</th>
+                        <th class="col-cantidad">Candidatos</th>
+                        <th class="col-porcentaje">Porcentaje</th>
+                    </tr>
+    """
+    
+    # Analizar los períodos históricos para radicales
+    periodos_rad = analizar_periodos_historicos(radicales_exp)
+    total_periodos_rad = sum(periodos_rad.values())
+    
+    for periodo in periodos_orden:
+        cantidad = periodos_rad.get(periodo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_periodos_rad) * 100 if total_periodos_rad > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{periodo}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de períodos
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_periodos_rad}</td>
+                        <td>100%</td>
+                    </tr>
+                </table>
+                
+                <h4>Distribución por Tipo de Cargo Previo</h4>
+                <table>
+                    <tr>
+                        <th class="col-nombre">Cargo Previo</th>
+                        <th class="col-cantidad">Candidatos</th>
+                        <th class="col-porcentaje">Porcentaje</th>
+                    </tr>
+    """
+    
+    # Analizar los tipos de cargo previo para radicales
+    cargos_previos_rad = analizar_cargos_previos(radicales_exp)
+    total_cargos_rad = sum(cargos_previos_rad.values())
+    
+    for cargo in cargos_orden:
+        cantidad = cargos_previos_rad.get(cargo, 0)
+        if cantidad > 0:
+            porcentaje = (cantidad / total_cargos_rad) * 100 if total_cargos_rad > 0 else 0
+            html += f"""
+                    <tr>
+                        <td>{cargo}</td>
+                        <td>{cantidad}</td>
+                        <td>{formato_decimal(porcentaje)}%</td>
+                    </tr>
+            """
+    
+    # Añadir fila de totales para la tabla de cargos
+    html += f"""
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_cargos_rad}</td>
                         <td>100%</td>
                     </tr>
                 </table>

@@ -164,60 +164,23 @@ def obtener_detalle_trayectoria_interpartidaria():
     return ejecutar_consulta(query)
 
 def obtener_candidatos_1946():
-    """Obtiene candidatos de los partidos peronistas en 1946, priorizando cargos legislativos"""
-    query = """
-    SELECT 
-        candidato.`ID_Persona`,
-        CONCAT(candidato.`Nombre`, ' ', candidato.`Apellido`) AS `Nombre_Completo`,
-        candidato.`Partido`,
-        candidato.`Cargo`,
-        candidato.`Ambito`,
-        candidato.`Electo`
-    FROM (
-        SELECT 
-            `ID_Persona`,
-            `Nombre`,
-            `Apellido`,
-            `Partido`,
-            `Cargo`,
-            `Ambito`,
-            `Electo`,
-            CASE 
-                WHEN `Cargo` IN ('Diputado', 'Senador') AND `Ambito` = 'Provincial' THEN 1
-                WHEN `Cargo` = 'Diputado' AND `Ambito` = 'Nacional' THEN 2
-                WHEN `Cargo` = 'Gobernador' THEN 3
-                WHEN `Cargo` = 'Elector' AND `Ambito` = 'Nacional' THEN 4
-                WHEN `Cargo` = 'Elector' AND `Ambito` = 'Provincial' THEN 5
-                ELSE 6
-            END as `Prioridad`,
-            `Electo` as `Es_Electo`
-        FROM `Listado`
-        WHERE `Anno` = 1946
-        AND `Partido` IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)')
-    ) as candidato
-    JOIN (
-        SELECT 
-            `ID_Persona`,
-            MIN(CASE 
-                WHEN `Cargo` IN ('Diputado', 'Senador') AND `Ambito` = 'Provincial' THEN 1
-                WHEN `Cargo` = 'Diputado' AND `Ambito` = 'Nacional' THEN 2
-                WHEN `Cargo` = 'Gobernador' THEN 3
-                WHEN `Cargo` = 'Elector' AND `Ambito` = 'Nacional' THEN 4
-                WHEN `Cargo` = 'Elector' AND `Ambito` = 'Provincial' THEN 5
-                ELSE 6
-            END) as `Mejor_Prioridad`,
-            MAX(`Electo`) as `Mejor_Electo`
-        FROM `Listado`
-        WHERE `Anno` = 1946
-        AND `Partido` IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)')
-        GROUP BY `ID_Persona`
-    ) as prioridad ON candidato.`ID_Persona` = prioridad.`ID_Persona`
-    WHERE (candidato.`Prioridad` = prioridad.`Mejor_Prioridad` 
-           AND (prioridad.`Mejor_Electo` = 0 OR candidato.`Es_Electo` = prioridad.`Mejor_Electo`))
-    GROUP BY candidato.`ID_Persona`
-    ORDER BY candidato.`Partido`, candidato.`Cargo`, candidato.`Electo` DESC, candidato.`Apellido`, candidato.`Nombre`;
     """
-    return ejecutar_consulta(query)
+    Obtiene todos los candidatos de partidos peronistas de 1946
+    
+    Returns:
+        list: Lista de candidatos con sus datos básicos
+    """
+    # Verificamos primero el formato de los datos devueltos para ver la estructura correcta
+    consulta = """
+        SELECT l.ID_Persona, CONCAT(l.Nombre, ' ', l.Apellido) AS Nombre_Completo, 
+               l.Partido, l.Cargo, l.Ambito, l.Electo
+        FROM listado l
+        WHERE l.Anno = 1946 
+        AND l.Partido IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)')
+        ORDER BY l.ID_Persona
+    """
+    
+    return ejecutar_consulta(consulta)
 
 def obtener_todos_candidatos_peronistas():
     """Obtiene todos los candidatos de partidos peronistas entre 1946 y 1955 (no solo electos)"""
