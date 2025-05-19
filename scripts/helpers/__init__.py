@@ -1,4 +1,3 @@
 """
-Módulo de ayudantes para trabajar con informes de candidatos.
-Contiene funciones auxiliares específicas para los diferentes informes.
+Paquete de funciones auxiliares para los informes del personal político de Corrientes.
 """
