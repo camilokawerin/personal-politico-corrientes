@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Estadísticas de Legisladores Peronistas (1946-1955)</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+            h1, h2 { color: #333; }
+            h2 { margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+            table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            .summary-box { margin-bottom: 20px; padding: 15px; background-color: #f5f5f5; border-left: 4px solid #4CAF50; }
+            .chart-container { margin: 20px 0; text-align: center; }
+            .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+            .grid-container-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+            @media (max-width: 768px) { 
+                .grid-container { grid-template-columns: 1fr; } 
+                .grid-container-3 { grid-template-columns: 1fr; }
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Estadísticas de Legisladores Peronistas con Trayectoria Política Previa</h1>
+        <p>Informe generado el: 08/07/2025 15:57:36</p>
+        
+        <!-- Resumen general -->
+        <div class="grid-container">
+            <div class="summary-box">
+                <h3>Resumen General</h3>
+                <p><strong>Total de legisladores con experiencia previa:</strong> 9</p>
+                <p><strong>Promedio de candidaturas previas por legislador:</strong> 1,67</p>
+                <p><strong>Antigüedad política promedio antes del peronismo:</strong> 13,7 años</p>
+            </div>
+            
+            <div class="summary-box">
+                <h3>Periodos Históricos</h3>
+                <p><strong>1900-1915:</strong> 0 legisladores</p>
+                <p><strong>1916-1930:</strong> 2 legisladores</p>
+                <p><strong>1931-1942:</strong> 6 legisladores</p>
+                <p><strong>1943-1945:</strong> 0 legisladores</p>
+            </div>
+        </div>
+    
+        <div class="grid-container-3">
+    
+            <div class="chart-container">
+                <h2>Procedencia Partidaria</h2>
+                <img src="grafico_partidos_previos.png" alt="Gráfico de partidos previos" style="max-width: 100%;">
+            </div>
+        
+            <div class="chart-container">
+                <h2>Distribución Temporal</h2>
+                <img src="grafico_periodos_temporales.png" alt="Gráfico de períodos temporales" style="max-width: 100%;">
+            </div>
+        
+            <div class="chart-container">
+                <h2>Cargos Previos</h2>
+                <img src="grafico_cargos_previos.png" alt="Gráfico de cargos previos" style="max-width: 100%;">
+            </div>
+        
+        </div>
+    
+        <h2>Distribución por Partido Previo</h2>
+        <table>
+            <tr>
+                <th>Partido Previo</th>
+                <th>Cantidad de Legisladores</th>
+                <th>Porcentaje</th>
+                <th>Año Más Antiguo</th>
+                <th>Año Más Reciente</th>
+            </tr>
+        
+        <tr>
+            <td>Radical Antipersonalista</td>
+            <td>4</td>
+            <td>44,44%</td>
+            <td>1929</td>
+            <td>1946</td>
+        </tr>
+        
+        <tr>
+            <td>Autonomista</td>
+            <td>1</td>
+            <td>11,11%</td>
+            <td>1934</td>
+            <td>1938</td>
+        </tr>
+        
+        <tr>
+            <td>Demócrata Nacional (Autonomista)</td>
+            <td>1</td>
+            <td>11,11%</td>
+            <td>1931</td>
+            <td>1931</td>
+        </tr>
+        
+        <tr>
+            <td>Liberal</td>
+            <td>1</td>
+            <td>11,11%</td>
+            <td>1937</td>
+            <td>1946</td>
+        </tr>
+        
+        <tr>
+            <td>Liberal Pactista</td>
+            <td>1</td>
+            <td>11,11%</td>
+            <td>1931</td>
+            <td>1931</td>
+        </tr>
+        
+        <tr>
+            <td>Radical</td>
+            <td>1</td>
+            <td>11,11%</td>
+            <td>1928</td>
+            <td>1928</td>
+        </tr>
+        
+        </table>
+        
+        <h2>Distribución por Cargo Previo</h2>
+        <table>
+            <tr>
+                <th>Cargo Previo</th>
+                <th>Cantidad de Legisladores</th>
+                <th>Electos</th>
+                <th>Año Más Antiguo</th>
+                <th>Año Más Reciente</th>
+            </tr>
+        
+            <tr>
+                <td>Diputado Provincial</td>
+                <td>8</td>
+                <td>2</td>
+                <td>1929</td>
+                <td>1946</td>
+            </tr>
+            
+            <tr>
+                <td>Diputado Nacional</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1928</td>
+                <td>1928</td>
+            </tr>
+            
+            <tr>
+                <td>Senador Provincial</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1938</td>
+                <td>1942</td>
+            </tr>
+            
+        </table>
+                <h2>Detalle de Legisladores con Trayectoria Política Interpartidaria</h2>
+        <table>
+            <tr>
+                <th rowspan="2">Nombre Completo</th>
+                <th colspan="3" style="border-bottom: 2px solid #4CAF50; background-color: #e8f5e9;">Trayectoria Peronista</th>
+                <th colspan="5" style="border-bottom: 2px solid #2196F3; background-color: #e3f2fd;">Trayectoria Previa</th>
+            </tr>
+            <tr>
+                <th>Cargos Durante Peronismo</th>
+                <th>Candidaturas</th>
+                <th>Primera candidatura peronista</th>
+                <th>Partidos Previos</th>
+                <th>Cargos Previos</th>
+                <th>Candidaturas Previas</th>
+                <th>Primera Candidatura</th>
+                <th>Experiencia (años)</th>
+            </tr>
+        
+            <tr>
+                <td>J. Noel Breard</td>
+                <td>Elector Provincial, Senador Provincial (*)</td>
+                <td>2</td>
+                <td>1946</td>
+                <td>Radical Antipersonalista</td>
+                <td>Senador Provincial (*), Senador Provincial, Diputado Provincial (*)</td>
+                <td>4</td>
+                <td>1935</td>
+                <td>11</td>
+            </tr>
+            
+            <tr>
+                <td>Luis Isidro Giménez</td>
+                <td>Diputado Provincial (*)</td>
+                <td>2</td>
+                <td>1951</td>
+                <td>Liberal</td>
+                <td>Diputado Provincial</td>
+                <td>2</td>
+                <td>1937</td>
+                <td>14</td>
+            </tr>
+            
+            <tr>
+                <td>Pablo Edgardo Politis</td>
+                <td>Diputado Provincial (*)</td>
+                <td>1</td>
+                <td>1954</td>
+                <td>Radical Antipersonalista</td>
+                <td>Diputado Provincial</td>
+                <td>2</td>
+                <td>1940</td>
+                <td>14</td>
+            </tr>
+            
+            <tr>
+                <td>Horacio Traynor</td>
+                <td>Diputado Provincial, Senador Provincial (*)</td>
+                <td>2</td>
+                <td>1946</td>
+                <td>Autonomista</td>
+                <td>Diputado Provincial (*), Diputado Provincial</td>
+                <td>2</td>
+                <td>1934</td>
+                <td>12</td>
+            </tr>
+            
+            <tr>
+                <td>Sabino Apolonio Acosta Monzón</td>
+                <td>Senador Provincial (*)</td>
+                <td>2</td>
+                <td>1946</td>
+                <td>Demócrata Nacional (Autonomista)</td>
+                <td>Diputado Provincial</td>
+                <td>1</td>
+                <td>1931</td>
+                <td>15</td>
+            </tr>
+            
+            <tr>
+                <td>Rafael Alejandro Mora y Araujo</td>
+                <td>Diputado Provincial (*), Senador Provincial (*)</td>
+                <td>2</td>
+                <td>1946</td>
+                <td>Radical Antipersonalista</td>
+                <td>Diputado Provincial</td>
+                <td>1</td>
+                <td>1929</td>
+                <td>17</td>
+            </tr>
+            
+            <tr>
+                <td>Julio Romero</td>
+                <td>Senador Provincial (*)</td>
+                <td>1</td>
+                <td>1951</td>
+                <td>Radical Antipersonalista</td>
+                <td>Diputado Provincial</td>
+                <td>1</td>
+                <td>1946</td>
+                <td>5</td>
+            </tr>
+            
+            <tr>
+                <td>Alfredo Tressens</td>
+                <td>Senador Provincial (*)</td>
+                <td>2</td>
+                <td>1948</td>
+                <td>Radical</td>
+                <td>Diputado Nacional (*)</td>
+                <td>1</td>
+                <td>1928</td>
+                <td>20</td>
+            </tr>
+            
+            <tr>
+                <td>Gregorio Urturi</td>
+                <td>Senador Provincial (*)</td>
+                <td>1</td>
+                <td>1946</td>
+                <td>Liberal Pactista</td>
+                <td>Diputado Provincial</td>
+                <td>1</td>
+                <td>1931</td>
+                <td>15</td>
+            </tr>
+            
+        </table>
+        <p><small>(*) Indica que el legislador fue electo para ese cargo.</small></p>
+        
+    </body>
+    </html>
+    
