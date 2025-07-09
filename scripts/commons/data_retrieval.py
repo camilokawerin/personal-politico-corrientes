@@ -177,6 +177,7 @@ def obtener_candidatos_1946():
         FROM listado l
         WHERE l.Anno = 1946 
         AND l.Partido IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)')
+        GROUP BY l.ID_Persona
         ORDER BY l.ID_Persona
     """
     
@@ -281,6 +282,86 @@ def obtener_detalle_trayectoria_candidatos_peronistas():
         `Anno_Primera_Candidatura`,
         `Anno_Ultima_Candidatura`
     FROM TrayectoriaPrincipal
+    ORDER BY `Cantidad_Candidaturas_Previas` DESC, `Nombre_Completo`;
+    """
+    result = ejecutar_consulta(query)
+    return result
+
+def obtener_detalle_trayectoria_candidatos_1946():
+    """Obtiene el detalle de todos los candidatos de 1946, con o sin experiencia política previa"""
+    query = """
+    WITH Candidatos1946 AS (
+        -- Subconsulta: Candidatos de 1946
+        SELECT DISTINCT 
+            L.`ID_Persona`,
+            L.`Nombre`,
+            L.`Apellido`,
+            L.`Partido`,
+            L.`Cargo`,
+            L.`Ambito`,
+            L.`Electo`
+        FROM `Listado` L
+        WHERE L.`Anno` = 1946
+        AND L.`Partido` IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)')
+    ),
+    PartidosPrevios AS (
+        -- Obtener todos los partidos previos por cada persona
+        SELECT 
+            C.`ID_Persona`,
+            L2.`Partido`,
+            L2.`Anno`,
+            -- Prioridad para selección de partido
+            CASE 
+                WHEN L2.`Partido` IN ('Radical Antipersonalista', 'Radical Personalista', 'Autonomista', 'Liberal') THEN 1
+                WHEN L2.`Partido` LIKE '%Radical%' OR L2.`Partido` LIKE '%Autonomista%' OR L2.`Partido` LIKE '%Liberal%' THEN 2
+                ELSE 3
+            END as Prioridad
+        FROM Candidatos1946 C
+        JOIN `Listado` L2 ON C.`ID_Persona` = L2.`ID_Persona`
+            AND L2.`Anno` < 1946
+            AND L2.`Partido` NOT IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)', 'Peronista')
+    )
+    
+    SELECT DISTINCT
+        C.`ID_Persona`,
+        CONCAT(C.`Nombre`, ' ', C.`Apellido`) AS `Nombre_Completo`,
+        C.`Partido` AS `Partido_Peronista`,
+        1946 AS `Anno_Peronista`,
+        C.`Cargo` AS `Cargo_Peronista`,
+        C.`Ambito` AS `Ambito_Peronista`,
+        C.`Electo` AS `Electo_Peronista`,
+        -- Seleccionar partido previo principal según las reglas de prioridad
+        (SELECT `Partido` FROM PartidosPrevios PP 
+         WHERE PP.`ID_Persona` = C.`ID_Persona` 
+         ORDER BY PP.Prioridad, PP.`Anno` DESC LIMIT 1) AS `Partido_Principal`,
+        -- Para conservar todos los partidos previos para análisis
+        (SELECT GROUP_CONCAT(DISTINCT PP.`Partido` ORDER BY PP.`Anno` DESC SEPARATOR ', ')
+         FROM PartidosPrevios PP
+         WHERE PP.`ID_Persona` = C.`ID_Persona`) AS `Partidos_Previos`,
+        -- Información de cargos
+        (SELECT GROUP_CONCAT(DISTINCT CONCAT(L2.`Cargo`, ' ', L2.`Ambito`,
+            CASE WHEN L2.`Electo` = 1 THEN ' (*)' ELSE '' END) 
+            ORDER BY L2.`Anno` DESC SEPARATOR ', ')
+         FROM `Listado` L2
+         WHERE L2.`ID_Persona` = C.`ID_Persona`
+         AND L2.`Anno` < 1946
+         AND L2.`Partido` NOT IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)', 'Peronista')) AS `Cargos_Previos`,
+        (SELECT COUNT(DISTINCT L2.`id`)
+         FROM `Listado` L2
+         WHERE L2.`ID_Persona` = C.`ID_Persona`
+         AND L2.`Anno` < 1946
+         AND L2.`Partido` NOT IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)', 'Peronista')) AS `Cantidad_Candidaturas_Previas`,
+        (SELECT MIN(L2.`Anno`)
+         FROM `Listado` L2
+         WHERE L2.`ID_Persona` = C.`ID_Persona`
+         AND L2.`Anno` < 1946
+         AND L2.`Partido` NOT IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)', 'Peronista')) AS `Anno_Primera_Candidatura`,
+        (SELECT MAX(L2.`Anno`)
+         FROM `Listado` L2
+         WHERE L2.`ID_Persona` = C.`ID_Persona`
+         AND L2.`Anno` < 1946
+         AND L2.`Partido` NOT IN ('Laborista Correntino', 'Radical (Junta Reorganizadora)', 'Peronista')) AS `Anno_Ultima_Candidatura`
+    FROM Candidatos1946 C
     ORDER BY `Cantidad_Candidaturas_Previas` DESC, `Nombre_Completo`;
     """
     result = ejecutar_consulta(query)

@@ -25,8 +25,10 @@ def procesar_datos_candidatos(candidatos, candidatos_con_experiencia, obtener_tr
     experiencia_previa = {}
     for c in candidatos_con_experiencia:
         id_persona = c['ID_Persona']
+        # Un candidato tiene experiencia previa si tiene candidaturas anteriores a 1946
+        tiene_experiencia = c.get('Cantidad_Candidaturas_Previas', 0) > 0
         experiencia_previa[id_persona] = {
-            'tiene_experiencia_previa': True,
+            'tiene_experiencia_previa': tiene_experiencia,
             'cantidad_candidaturas': c.get('Cantidad_Candidaturas_Previas', 0),
             'partidos_previos': c.get('Partidos_Previos', ''),
             'cargos_previos': c.get('Cargos_Previos', ''),
@@ -107,23 +109,61 @@ def procesar_datos_candidatos(candidatos, candidatos_con_experiencia, obtener_tr
 
 def analizar_partidos_previos(candidatos):
     """
-    Analiza y cuenta los partidos previos de los candidatos
+    Analiza y cuenta los partidos previos de los candidatos, agrupando por persona
+    y seleccionando el partido más representativo para cada una según las siguientes prioridades:
+    1. Si tiene partidos radicales, autonomistas o liberales, prioriza estos
+    2. Si no, toma el más reciente
     
     Args:
         candidatos (list): Lista de candidatos con experiencia previa
         
     Returns:
-        Counter: Contador con la distribución de partidos previos
+        Counter: Contador con la distribución de partidos previos (un partido por persona)
     """
     contador_partidos = Counter()
+    personas_procesadas = set()
     
     for c in candidatos:
+        id_persona = c.get('id_persona')
+        
+        # Evitar contar la misma persona más de una vez
+        if id_persona in personas_procesadas:
+            continue
+            
         if c.get('partidos_previos'):
-            # Si hay varios partidos separados por comas, dividirlos y contarlos individualmente
-            partidos = c['partidos_previos'].split(', ')
-            for partido in partidos:
-                if partido:
-                    contador_partidos[partido] += 1
+            # Dividir los partidos separados por comas
+            partidos = [p.strip() for p in c['partidos_previos'].split(', ') if p.strip()]
+            
+            if partidos:
+                # Buscar primero partidos de las familias principales (radical, autonomista, liberal)
+                partido_seleccionado = None
+                
+                # Prioridad 1: Buscar partidos radicales
+                for partido in partidos:
+                    if 'radical' in partido.lower():
+                        partido_seleccionado = partido
+                        break
+                
+                # Prioridad 2: Si no hay radicales, buscar autonomistas
+                if not partido_seleccionado:
+                    for partido in partidos:
+                        if 'autonom' in partido.lower():
+                            partido_seleccionado = partido
+                            break
+                
+                # Prioridad 3: Si no hay radicales ni autonomistas, buscar liberales
+                if not partido_seleccionado:
+                    for partido in partidos:
+                        if 'liberal' in partido.lower():
+                            partido_seleccionado = partido
+                            break
+                
+                # Prioridad 4: Si no hay ninguno de los anteriores, tomar el más reciente (primero en la lista)
+                if not partido_seleccionado:
+                    partido_seleccionado = partidos[0]
+                
+                contador_partidos[partido_seleccionado] += 1
+                personas_procesadas.add(id_persona)
     
     return contador_partidos
 

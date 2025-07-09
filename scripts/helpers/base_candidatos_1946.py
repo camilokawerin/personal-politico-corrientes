@@ -15,7 +15,7 @@ sys.path.insert(0, project_root)
 from scripts.commons.data_retrieval import (
     obtener_candidatos_1946,
     obtener_trayectoria,
-    obtener_detalle_trayectoria_candidatos_peronistas
+    obtener_detalle_trayectoria_candidatos_1946
 )
 from scripts.helpers.analisis_candidatos_1946 import procesar_datos_candidatos
 from scripts.helpers.html_candidatos_1946 import generar_informe_html_candidatos_1946
@@ -34,7 +34,7 @@ def generar_informe_candidatos_1946():
     # Obtener datos de candidatos
     print("1. Obteniendo candidatos peronistas de 1946...")
     candidatos = obtener_candidatos_1946()
-    candidatos_con_experiencia = obtener_detalle_trayectoria_candidatos_peronistas()
+    candidatos_con_experiencia = obtener_detalle_trayectoria_candidatos_1946()
     
     if not candidatos:
         print("No se encontraron candidatos peronistas de 1946 para analizar.")
