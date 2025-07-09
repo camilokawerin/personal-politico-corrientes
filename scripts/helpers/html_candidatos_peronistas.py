@@ -118,6 +118,9 @@ def generar_informe_html_candidatos_peronistas(candidatos_data, datos_partidos_p
     # Calcular estadísticas detalladas por tipo de cargo
     estadisticas_por_cargo = calcular_estadisticas_partido_previo_por_tipo_cargo(grupos_cargo, detalle_trayectorias)
     
+    # Añadir distribución por tipo de cargo (nuevo cuadro)
+    html += _generar_seccion_distribucion_por_tipo_cargo(grupos_cargo, estadisticas_por_cargo)
+    
     # Añadir análisis de periodos históricos y cargos previos a las estadísticas por tipo de cargo
     html += _generar_seccion_analisis_por_tipo_cargo(estadisticas_por_cargo, grupos_cargo)
     
@@ -851,6 +854,62 @@ def _generar_tabla_cargos_previos_por_cargo(stats):
         </tr>
     </table>
     """
+    return html
+
+def _generar_seccion_distribucion_por_tipo_cargo(grupos_cargo, estadisticas_por_cargo):
+    """Genera la sección de distribución por tipo de cargo"""
+    html = """
+    <h2>Distribución por Tipo de Cargo</h2>
+    <p>Distribución de candidatos peronistas según el tipo de cargo al que se postularon entre 1946 y 1955.</p>
+    <table>
+        <tr>
+            <th class="col-nombre">Tipo de Cargo</th>
+            <th class="col-cantidad">Total Candidatos</th>
+            <th class="col-cantidad">Con Trayectoria Previa</th>
+            <th class="col-porcentaje">% Con Trayectoria</th>
+        </tr>
+    """
+    
+    # Ordenar por total de candidatos de menor a mayor
+    tipos_cargo_ordenados = sorted(grupos_cargo.items(), 
+                                  key=lambda x: estadisticas_por_cargo.get(x[0], {}).get('total_candidatos', 0), 
+                                  reverse=False)
+    
+    total_general = 0
+    total_con_experiencia_general = 0
+    
+    for tipo_cargo, candidatos in tipos_cargo_ordenados:
+        if candidatos:
+            stats = estadisticas_por_cargo.get(tipo_cargo, {})
+            total_candidatos = stats.get('total_candidatos', 0)
+            con_experiencia = stats.get('con_experiencia_previa', 0)
+            porcentaje = stats.get('porcentaje_con_experiencia', 0)
+            
+            total_general += total_candidatos
+            total_con_experiencia_general += con_experiencia
+            
+            html += f"""
+        <tr>
+            <td>{tipo_cargo}</td>
+            <td>{total_candidatos}</td>
+            <td>{con_experiencia}</td>
+            <td>{formato_decimal(porcentaje)}%</td>
+        </tr>
+        """
+    
+    # Agregar fila de totales
+    porcentaje_general = (total_con_experiencia_general / total_general * 100) if total_general > 0 else 0
+    
+    html += f"""
+        <tr style="font-weight: bold; background-color: #f2f2f2;">
+            <td>Total</td>
+            <td>{total_general}</td>
+            <td>{total_con_experiencia_general}</td>
+            <td>{formato_decimal(porcentaje_general)}%</td>
+        </tr>
+    </table>
+    """
+    
     return html
 
 def generar_tabla_candidatos(candidatos_data):
