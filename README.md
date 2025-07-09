@@ -97,6 +97,7 @@ python -c "from scripts.modules.informe_candidatos_1946 import generar_informe_c
 ### Requisitos
 
 - Python 3.6 o superior
+- MySQL 9
 - Bibliotecas requeridas:
   - mysql-connector-python
   - pandas

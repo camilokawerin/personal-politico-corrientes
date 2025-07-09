@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.11
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 15-05-2025 a las 13:02:42
--- Versión del servidor: 5.7.44
--- Versión de PHP: 7.4.33
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jul 09, 2025 at 12:48 AM
+-- Server version: 9.1.0
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -19,31 +18,31 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `personal-politico-corrientes`
+-- Database: `personal-politico-corrientes`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `listado`
+-- Table structure for table `listado`
 --
 
 DROP TABLE IF EXISTS `listado`;
 CREATE TABLE IF NOT EXISTS `listado` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ID_Persona` int(11) DEFAULT NULL,
-  `Control` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `ID_Persona` int DEFAULT NULL,
+  `Control` int DEFAULT NULL,
   `Nombre` varchar(255) DEFAULT NULL,
   `Apellido` varchar(255) DEFAULT NULL,
   `Partido` varchar(255) DEFAULT NULL,
   `Cargo` varchar(255) DEFAULT NULL,
   `Ambito` varchar(255) DEFAULT NULL,
-  `Anno` int(11) DEFAULT NULL,
+  `Anno` int DEFAULT NULL,
   `Seccion` varchar(255) DEFAULT NULL,
   `Electo` tinyint(1) DEFAULT '0',
   `Suplente` tinyint(1) DEFAULT '0',
-  `Inicio_mandato` int(11) DEFAULT NULL,
-  `Fin_mandato` int(11) DEFAULT NULL,
+  `Inicio_mandato` int DEFAULT NULL,
+  `Fin_mandato` int DEFAULT NULL,
   `Sexo` char(1) DEFAULT NULL,
   `Profesion` varchar(255) DEFAULT NULL,
   `Otros_datos` varchar(255) DEFAULT NULL,
@@ -55,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `listado` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2884 DEFAULT CHARSET=latin1;
 
 --
--- Volcado de datos para la tabla `listado`
+-- Dumping data for table `listado`
 --
 
 INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Partido`, `Cargo`, `Ambito`, `Anno`, `Seccion`, `Electo`, `Suplente`, `Inicio_mandato`, `Fin_mandato`, `Sexo`, `Profesion`, `Otros_datos`, `Nombre_alternativo`, `Apellido_alternativo`, `Probabilidad_error`, `Observaciones`) VALUES
@@ -308,8 +307,8 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (247, 127, 1, 'Raúl F.', 'Arballo', 'Radical Personalista', 'Senador', 'Provincial', 1927, '1ra', 1, 0, 1927, 1929, '', '', 'Mandato interrumpido por la intervención federal', '', '', '', 'null'),
 (248, 127, 1, 'Raúl F.', 'Arballo', 'Radical Personalista', 'Diputado', 'Nacional', 1930, 'n/a', 1, 0, 1930, 1930, '', 'Doctor', '', '', '', '', 'null'),
 (249, 128, 0, 'Albino', 'Arbo', 'Pacto Autonomista – Liberal', 'Diputado', 'Provincial', 1914, '2da', 1, 0, 1914, 1917, '', '', '', '', '', '', 'null'),
-(250, 129, 0, 'José', 'Arbo y Blanco', 'Radical', 'Diputado', 'Provincial', 1920, '2da', 1, 0, 1920, 1923, '', '', '', '', '', '', 'null'),
-(251, 129, 0, 'José', 'Arbo y Blanco', 'Radical Nacionalista', 'Senador', 'Provincial', 1923, '2da', 1, 0, 1923, 1929, '', '', '', '', '', '', 'null'),
+(250, 129, 0, 'José María', 'Arbo y Blanco', 'Radical', 'Diputado', 'Provincial', 1920, '2da', 1, 0, 1920, 1923, '', '', '', '', '', '', 'null'),
+(251, 129, 0, 'José María', 'Arbo y Blanco', 'Radical Nacionalista', 'Senador', 'Provincial', 1923, '2da', 1, 0, 1923, 1929, '', '', '', '', '', '', 'null'),
 (252, 130, 0, 'Oreste', 'Arbo y Blanco', 'Radical', 'Diputado', 'Provincial', 1914, '2da', 0, 0, 0, 0, '', 'Capitán', '', '', '', '', 'null'),
 (253, 131, 0, 'Rubén María', 'Arbo y Blanco', 'Radical (Junta Reorganizadora)', 'Diputado', 'Provincial', 1946, '1ra', 1, 0, 1946, 1947, '', '', 'reemplazado por Alfredo Quiroz', '', '', '', 'null'),
 (254, 132, 0, 'Domingo', 'Arce', 'Radical', 'Elector', 'Provincial', 1948, '4ta', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -492,9 +491,9 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (430, 232, 1, 'Manuel A.', 'Bermúdez', 'Pacto Autonomista – Liberal', 'Diputado', 'Nacional', 1926, 'n/a', 1, 0, 1926, 1930, '', 'Profesor', '', '', '', '', 'null'),
 (431, 232, 1, 'Manuel A.', 'Bermúdez', 'Liberal', 'Diputado', 'Nacional', 1930, 'n/a', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (432, 232, 1, 'Manuel A.', 'Bermúdez', 'Liberal', 'Diputado', 'Nacional', 1931, 'n/a', 1, 0, 1932, 1936, '', '', '', '', '', '', 'null'),
-(433, 232, 1, 'Eduardo', 'Beretta', 'Alianza Socialista-Demócrata Progresista-Juventud Liberal', 'Diputado', 'Nacional', 1931, 'n/a', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(434, 232, 1, 'Eduardo', 'Beretta', 'Alianza Socialista – Demócrata Progresista – Juventud Liberal', 'Diputado', 'Provincial', 1931, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(435, 232, 1, 'Eduardo', 'Beretta', 'Alianza Socialista – Demócrata Progresista – Juventud Liberal', 'Senador', 'Provincial', 1931, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(433, 2886, 1, 'Eduardo', 'Beretta', 'Alianza Socialista-Demócrata Progresista-Juventud Liberal', 'Diputado', 'Nacional', 1931, 'n/a', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(434, 2886, 1, 'Eduardo', 'Beretta', 'Alianza Socialista – Demócrata Progresista – Juventud Liberal', 'Diputado', 'Provincial', 1931, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(435, 2886, 1, 'Eduardo', 'Beretta', 'Alianza Socialista – Demócrata Progresista – Juventud Liberal', 'Senador', 'Provincial', 1931, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (436, 233, 0, 'Marcelino', 'Bergara', 'Radical (Junta Reorganizadora)', 'Elector', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', 'Vergara', '', 'null'),
 (437, 233, 0, 'Pedro Amado', 'Berro', 'Laborista Correntino', 'Elector', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (438, 234, 0, 'José', 'Berti López', 'Demócrata Nacional (Distrito Corrientes)', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
@@ -843,9 +842,9 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (780, 403, 1, 'Camilo', 'Córdoba', 'Liberal', 'Diputado', 'Provincial', 1922, '3ra', 0, 0, 0, 0, '', '', '', '', '', '50', 'No coincide la (h) y hay un plazo muy largo'),
 (781, 403, 1, 'Camilo (h)', 'Córdoba', 'Liberal', 'Diputado', 'Provincial', 1931, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (782, 404, 0, 'Castor', 'Córdoba', 'Liberal', 'Senador', 'Provincial', 1911, '2da', 1, 0, 1911, 1911, '', '', 'Falleció en el cargo', '', '', '', 'null'),
-(783, 404, 0, 'María Ramona', 'Córdoba de De la Fuente', 'Peronista', 'Diputado', 'Nacional', 1954, 's/d', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(784, 405, 1, 'Castor', 'Córdoba', 'Liberal', 'Diputado', 'Provincial', 1915, '1ra', 1, 0, 1915, 1918, '', '', '', '', 'Córdova', '', 'null'),
-(785, 405, 1, 'Castor', 'Córdoba', 'Liberal De Tradición', 'Diputado', 'Provincial', 1919, '1ra/2da', 1, 0, 1919, 1921, '', '', '', '', '', '', 'null'),
+(783, 2887, 0, 'María Ramona', 'Córdoba de De la Fuente', 'Peronista', 'Diputado', 'Nacional', 1954, 's/d', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(784, 404, 1, 'Castor', 'Córdoba', 'Liberal', 'Diputado', 'Provincial', 1915, '1ra', 1, 0, 1915, 1918, '', '', '', '', 'Córdova', '', 'null'),
+(785, 404, 1, 'Castor', 'Córdoba', 'Liberal De Tradición', 'Diputado', 'Provincial', 1919, '1ra/2da', 1, 0, 1919, 1921, '', '', '', '', '', '', 'null'),
 (786, 405, 0, 'Evaristo', 'Corrales', 'Demócrata Nacional (Autonomista)', 'Diputado', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'Tomado de Harvey'),
 (787, 406, 0, 'Félix J.', 'Correa', 'Radical Antipersonalista', 'Senador', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (788, 407, 0, 'Florencio J.', 'Correa', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -2036,27 +2035,27 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (1969, 1053, 1, 'Emilio Loreto', 'Monzón', 'Radical Personalista', 'Elector', 'Provincial', 1935, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1970, 1053, 1, 'Emilio Loreto', 'Monzón', 'Radical Personalista', 'Senador', 'Provincial', 1936, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'Sin datos sobre el sorteo'),
 (1971, 1054, 0, 'Antonio', 'Mora y Araujo', 'Radical', 'Diputado', 'Nacional', 1916, 'n/a', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1972, 1055, 1, 'José F.', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1926, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1973, 1055, 1, 'José', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1931, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1974, 1055, 1, 'José', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1935, '2da', 1, 0, 1935, 1938, '', '', '', '', '', '', 'null'),
-(1975, 1055, 1, 'José F.', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1938, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1976, 1056, 1, 'Manuel', 'Mora y Araujo', 'Pacto Autonomista – Liberal Martinista', 'Elector', 'Provincial', 1909, '2da', 1, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
-(1977, 1056, 1, 'Manuel', 'Mora y Araujo', 'Pacto Autonomista – Liberal', 'Diputado', 'Nacional', 1912, 'n/a', 1, 0, 1912, 1916, '', 'Doctor', '', '', '', '', 'null'),
-(1978, 1056, 1, 'Manuel', 'Mora y Araujo', 'Radical', 'Diputado', 'Nacional', 1920, 'n/a', 1, 0, 1920, 1924, '', '', '', '', '', '', 'null'),
-(1979, 1056, 1, 'M.', 'Mora y Araujo', 'Radical (sotista Y Morista)', 'Diputado', 'Provincial', 1923, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1980, 1056, 1, 'Manuel (h)', 'Mora Y Araujo', 'Radical', 'Diputado', 'Provincial', 1924, '1ra', 1, 0, 1924, 1927, '', '', '', '', '', '', 'null'),
+(1972, 1055, 1, 'José Félix', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1926, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1973, 1055, 1, 'José Félix', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1931, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1974, 1055, 1, 'José Félix', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1935, '2da', 1, 0, 1935, 1938, '', '', '', '', '', '', 'null'),
+(1975, 1055, 1, 'José Félix', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1938, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1976, 1056, 1, 'Manuel Cástulo', 'Mora y Araujo', 'Pacto Autonomista – Liberal Martinista', 'Elector', 'Provincial', 1909, '2da', 1, 0, 0, 0, '', 'Doctor', '', '', '', '', 'null'),
+(1977, 1056, 1, 'Manuel Cástulo', 'Mora y Araujo', 'Pacto Autonomista – Liberal', 'Diputado', 'Nacional', 1912, 'n/a', 1, 0, 1912, 1916, '', 'Doctor', '', '', '', '', 'null'),
+(1978, 1056, 1, 'Manuel Cástulo', 'Mora y Araujo', 'Radical', 'Diputado', 'Nacional', 1920, 'n/a', 1, 0, 1920, 1924, '', '', '', '', '', '', 'null'),
+(1979, 1056, 1, 'Manuel Cástulo', 'Mora y Araujo', 'Radical (sotista Y Morista)', 'Diputado', 'Provincial', 1923, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1980, 1056, 1, 'Manuel Cástulo', 'Mora Y Araujo', 'Radical', 'Diputado', 'Provincial', 1924, '1ra', 1, 0, 1924, 1927, '', '', '', '', '', '', 'null'),
 (1981, 1057, 1, 'Manuel Cástulo', 'Mora y Araujo', 'Peronista', 'Elector', 'Provincial', 1948, '1ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1982, 1057, 1, 'Manuel Cástulo', 'Mora y Araujo', 'Peronista', 'Senador', 'Provincial', 1951, '1ra', 1, 0, 1952, 1955, '', '', 'Falleció en el cargo', '', '', '', 'null'),
 (1983, 1058, 1, 'Pedro', 'Mora y Araujo', 'Pacto Autonomista – Liberal Martinista', 'Diputado', 'Provincial', 1910, '3ra', 1, 0, 1910, 1913, '', '', '', '', '', '', 'null'),
 (1984, 1058, 1, 'Pedro', 'Mora y Araujo', 'Liberal Morista', 'Diputado', 'Provincial', 1914, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1985, 1059, 1, 'Rafael', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1929, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1985, 1059, 1, 'Rafael Alejandro', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1929, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1986, 1059, 1, 'Rafael Alejandro', 'Mora y Araujo', 'Radical (Junta Reorganizadora)', 'Diputado', 'Provincial', 1946, '2da', 1, 0, 1946, 1947, '', '', '', '', '', '', 'null'),
 (1987, 1059, 1, 'Rafael Alejandro', 'Mora y Araujo', 'Peronista', 'Senador', 'Provincial', 1948, '2da', 1, 0, 1948, 1952, '', '', '', '', '', '', 'null'),
-(1988, 1060, 1, 'Urbano', 'Mora y Araujo', 'Radical Personalista', 'Diputado', 'Provincial', 1926, '2da', 0, 1, 0, 0, '', '', '', '', '', '', 'Incluido por Harvey (2008, 1:53) en la lista de candidatos'),
-(1989, 1060, 1, 'Urbano', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1927, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1990, 1060, 1, 'Urbano', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1928, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
-(1991, 1060, 1, 'Urbano', 'Mora y Araujo', 'Radical Antipersonalista', 'Senador', 'Provincial', 1929, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'Sin datos sobre el sorteo'),
-(1992, 1060, 1, 'Urbano', 'Mora y Araujo', 'Radical (Junta Reorganizadora)', 'Elector', 'Provincial', 1946, '1ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1988, 1060, 1, 'Antonio Urbano', 'Mora y Araujo', 'Radical Personalista', 'Diputado', 'Provincial', 1926, '2da', 0, 1, 0, 0, '', '', '', '', '', '', 'Incluido por Harvey (2008, 1:53) en la lista de candidatos'),
+(1989, 1060, 1, 'Antonio Urbano', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1927, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1990, 1060, 1, 'Antonio Urbano', 'Mora y Araujo', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1928, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
+(1991, 1060, 1, 'Antonio Urbano', 'Mora y Araujo', 'Radical Antipersonalista', 'Senador', 'Provincial', 1929, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'Sin datos sobre el sorteo'),
+(1992, 1060, 1, 'Antonio Urbano', 'Mora y Araujo', 'Radical (Junta Reorganizadora)', 'Elector', 'Provincial', 1946, '1ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1993, 1061, 0, 'J. Augusto', 'Morales', 'Radical', 'Diputado', 'Provincial', 1948, '1ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (1994, 1062, 0, 'Ramón', 'Morales', 'Peronista', 'Diputado', 'Provincial', 1948, '1ra', 1, 0, 1948, 1952, '', '', '', '', '', '', 'null'),
 (1995, 1063, 0, 'Juan', 'Moray', 'Demócrata Nacional (Distrito Corrientes)', 'Senador', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
@@ -2581,8 +2580,8 @@ INSERT INTO `listado` (`id`, `ID_Persona`, `Control`, `Nombre`, `Apellido`, `Par
 (2513, 1345, 1, 'José', 'Sanchez Negrette', 'Autonomista', 'Diputado', 'Provincial', 1928, '3ra', 1, 0, 1928, 1929, '', '', 'Mandato interrumpido por la intervención federal', 'Juan', '', '', 'null'),
 (2514, 1346, 0, 'Martín', 'Sánchez Negrette', 'Demócrata Nacional (Autonomista)', 'Elector', 'Provincial', 1946, '3ra', 1, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2515, 1347, 0, 'Salvador', 'Sánchez Negrette', 'Demócrata Nacional (Autonomista)', 'Diputado', 'Provincial', 1946, '2da', 0, 0, 0, 0, '', '', '', '', '', '', 'Tomado de Harvey'),
-(2516, 1348, 1, 'Miguel Angel', 'Sanchez Velazco', 'Peronista', 'Diputado', 'Provincial', 1948, '2da', 1, 0, 1948, 1952, '', '', '', '', '', '', 'null'),
-(2517, 1348, 1, 'Miguel Angel', 'Sanchez Velazco', 'Peronista', 'Diputado', 'Provincial', 1951, '2da', 1, 0, 1952, 1955, '', '', 'Mandato interrumpido por el golpe de Estado', '', '', '', 'null'),
+(2516, 1348, 1, 'Miguel Ángel', 'Sanchez Velazco', 'Peronista', 'Diputado', 'Provincial', 1948, '2da', 1, 0, 1948, 1952, '', '', '', '', '', '', 'null'),
+(2517, 1348, 1, 'Miguel Ángel', 'Sanchez Velazco', 'Peronista', 'Diputado', 'Provincial', 1951, '2da', 1, 0, 1952, 1955, '', '', 'Mandato interrumpido por el golpe de Estado', '', '', '', 'null'),
 (2518, 1349, 0, 'Carlos', 'Sanders', 'Radical Antipersonalista', 'Diputado', 'Provincial', 1946, '3ra', 0, 0, 0, 0, '', '', '', '', '', '', 'null'),
 (2519, 1350, 0, 'Manuel', 'Santos Delgado', 'Peronista', 'Senador', 'Provincial', 1951, '4ta', 0, 1, 0, 0, '', '', '', '', '', '', 'null'),
 (2520, 1351, 0, 'Luis', 'Saporitti', 'Peronista', 'Diputado', 'Nacional', 1948, 'n/a', 1, 0, 1948, 1952, '', '', '', '', '', '', 'null'),
