@@ -105,6 +105,36 @@ def generar_informe_html_candidatos_1946(candidatos_data):
         <div class="full-width-box">
             <p>Esta sección analiza todos los candidatos de partidos peronistas en 1946 sin distinguir entre Laborista Correntino y Radical (Junta Reorganizadora).</p>
             
+            <h3>Candidatos con Trayectoria Previa por Partido Peronista</h3>
+            <div class="summary-box">
+                <table>
+                    <tr>
+                        <th>Partido Peronista</th>
+                        <th>Total Candidatos</th>
+                        <th>Con Trayectoria Previa</th>
+                        <th>% Con Trayectoria</th>
+                    </tr>
+                    <tr>
+                        <td>Radical (Junta Reorganizadora)</td>
+                        <td>{len(candidatos_radicales_jr)}</td>
+                        <td>{len(radicales_jr_con_exp)}</td>
+                        <td>{formato_decimal(porc_radicales_jr_con_exp)}%</td>
+                    </tr>
+                    <tr>
+                        <td>Laborista Correntino</td>
+                        <td>{len(candidatos_laboristas)}</td>
+                        <td>{len(laboristas_con_exp)}</td>
+                        <td>{formato_decimal(porc_laboristas_con_exp)}%</td>
+                    </tr>
+                    <tr style="font-weight: bold; background-color: #f2f2f2;">
+                        <td>Total</td>
+                        <td>{total_candidatos}</td>
+                        <td>{len(candidatos_con_experiencia)}</td>
+                        <td>{formato_decimal(porcentaje_con_experiencia)}%</td>
+                    </tr>
+                </table>
+            </div>
+            
             <h3>Procedencia Partidaria de Candidatos con Experiencia Previa</h3>
             
             <div class="grid-container">
